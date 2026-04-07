@@ -1,0 +1,27 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+# Add your tech stack, conventions, style guides, domain knowledge, etc.
+# Example:
+#   context: |
+#     Tech stack: TypeScript, React, Node.js
+#     We use conventional commits
+#     Domain: e-commerce platform
+
+context: |
+  在執行任何 opsx:new 或 opsx:ff 或 opsx:propose 指令之前，必須先完整讀取以下規格文件：
+  - openspec/specs/common/spec.md（全域通用規格）
+  - openspec/specs/architecture/spec.md（架構規格）
+  - openspec/specs/api/spec.md（API 規格）
+  這些規格文件定義了整個專案的規範與慣例，所有新 change 的提案與實作都必須遵循這些規格。
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-06T17:25:46.604Z",
+  "events": [
+    {
+      "kind": "tap",
+      "tMs": 3057.208984375,
+      "x": 352,
+      "y": 812,
+      "referenceWidth": 402,
+      "referenceHeight": 874
+    },
+    {
+      "kind": "scroll",
+      "tMs": 10482,
+      "x": 201,
+      "y": 830,
+      "x2": 201,
+      "y2": 44,
+      "referenceWidth": 402,
+      "referenceHeight": 874,
+      "durationMs": 250,
+      "contentDirection": "down",
+      "amount": 300,
+      "pixels": 786
+    }
+  ]
+}
