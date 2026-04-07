@@ -1,6 +1,6 @@
 {
-    "name": "flutter_railway_timetable",
-    "short_name": "flutter_railway_timetable",
+    "name": "臺鐵時刻表",
+    "short_name": "臺鐵時刻表",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
