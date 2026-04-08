@@ -8,6 +8,7 @@ abstract class TimetableEvent with _$TimetableEvent {
     required String origin,
     required String destination,
     required String date,
+    @Default('') String time,
   }) = LoadTimetable;
   const factory TimetableEvent.retry() = RetryTimetable;
 }

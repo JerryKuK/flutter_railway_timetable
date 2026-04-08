@@ -9,6 +9,12 @@ import 'package:flutter_railway_timetable/features/home/domain/entity/recent_sea
     as _i4;
 import 'package:flutter_railway_timetable/features/home/domain/repository/recent_search_repository.dart'
     as _i2;
+import 'package:flutter_railway_timetable/features/timetable/domain/entity/station.dart'
+    as _i7;
+import 'package:flutter_railway_timetable/features/timetable/domain/entity/train.dart'
+    as _i6;
+import 'package:flutter_railway_timetable/features/timetable/domain/repository/timetable_repository.dart'
+    as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -61,4 +67,38 @@ class MockRecentSearchRepository extends _i1.Mock
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
+}
+
+/// A class which mocks [TimetableRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTimetableRepository extends _i1.Mock
+    implements _i5.TimetableRepository {
+  MockTimetableRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<List<_i6.Train>> getDailyTimetable({
+    required String? origin,
+    required String? destination,
+    required String? date,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDailyTimetable, [], {
+              #origin: origin,
+              #destination: destination,
+              #date: date,
+            }),
+            returnValue: _i3.Future<List<_i6.Train>>.value(<_i6.Train>[]),
+          )
+          as _i3.Future<List<_i6.Train>>);
+
+  @override
+  _i3.Future<List<_i7.Station>> getStations() =>
+      (super.noSuchMethod(
+            Invocation.method(#getStations, []),
+            returnValue: _i3.Future<List<_i7.Station>>.value(<_i7.Station>[]),
+          )
+          as _i3.Future<List<_i7.Station>>);
 }

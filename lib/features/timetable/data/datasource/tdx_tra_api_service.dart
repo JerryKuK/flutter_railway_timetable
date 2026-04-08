@@ -1,34 +1,24 @@
 import 'package:dio/dio.dart';
-import '../dto/train_timetable_dto.dart';
+import 'package:retrofit/retrofit.dart';
+import '../dto/tdx_response_dto.dart';
 
-class TdxTraApiService {
-  final Dio _dio;
+part 'tdx_tra_api_service.g.dart';
 
-  TdxTraApiService(this._dio);
+@RestApi(baseUrl: 'https://tdx.transportdata.tw')
+abstract class TdxTraApiService {
+  factory TdxTraApiService(Dio dio, {String baseUrl}) = _TdxTraApiService;
 
-  Future<List<TrainTimetableDto>> getDailyTimetable(
-    String origin,
-    String destination,
-    String trainDate,
-  ) async {
-    final response = await _dio.get<List>(
-      'https://tdx.transportdata.tw/api/basic/v2/Rail/TRA/DailyTrainTimetable/OD/$origin/$destination/$trainDate',
-      queryParameters: {'\$format': 'JSON'},
-    );
-    if (response.data == null) return [];
-    return response.data!
-        .map((e) => TrainTimetableDto.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
+  @GET('/api/basic/v3/Rail/TRA/DailyTrainTimetable/OD/{origin}/to/{destination}/{trainDate}')
+  Future<TdxTimetableResponseDto> getDailyTimetable(
+    @Path('origin') String origin,
+    @Path('destination') String destination,
+    @Path('trainDate') String trainDate, {
+    @Query('\$format') String format = 'JSON',
+  });
 
-  Future<List<StationDto>> getStations() async {
-    final response = await _dio.get<List>(
-      'https://tdx.transportdata.tw/api/basic/v2/Rail/TRA/Station',
-      queryParameters: {'\$format': 'JSON'},
-    );
-    if (response.data == null) return [];
-    return response.data!
-        .map((e) => StationDto.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
+  @GET('/api/basic/v2/Rail/TRA/Station')
+  Future<List<TdxStationDto>> getStations({
+    @Query('\$format') String format = 'JSON',
+    @Query('\$top') int top = 500,
+  });
 }

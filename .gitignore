@@ -1,3 +1,7 @@
+# Environment variables (contains secrets)
+.env
+lib/core/env/env.g.dart
+
 # Miscellaneous
 *.class
 *.log

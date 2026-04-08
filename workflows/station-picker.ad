@@ -1,0 +1,21 @@
+context platform=ios device="iPhone 16 Pro" kind=simulator theme=unknown
+open "臺鐵時刻表" --relaunch
+click "role=\"other\" label=\"出發站 台北\" || label=\"出發站 台北\""
+click "role=\"statictext\" label=\"臺北市\" || label=\"臺北市\""
+click "role=\"statictext\" label=\"臺北\" || label=\"臺北\""
+click "role=\"other\" label=\"到達站 高雄\" || label=\"到達站 高雄\""
+swipe 350 342 50 342 300
+swipe 350 342 50 342 300
+swipe 350 342 50 342 300
+click "role=\"statictext\" label=\"新北市\" || label=\"新北市\""
+click "role=\"statictext\" label=\"高雄市\" || label=\"高雄市\""
+click "role=\"statictext\" label=\"高雄\" || label=\"高雄\""
+find "高雄" "click"
+get "attrs" "role=\"statictext\" label=\"高雄\" || label=\"高雄\""
+swipe 201 600 201 500 300
+get "attrs" "role=\"statictext\" label=\"高雄\" || label=\"高雄\""
+screenshot "/tmp/kaohsiung_list.png"
+get "attrs" "role=\"statictext\" label=\"高雄\" || label=\"高雄\""
+click 201 657
+screenshot "/tmp/selected_kaohsiung.png"
+close

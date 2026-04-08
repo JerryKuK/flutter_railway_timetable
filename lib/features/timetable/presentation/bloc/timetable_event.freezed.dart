@@ -122,10 +122,10 @@ return retry(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String origin,  String destination,  String date)?  load,TResult Function()?  retry,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String origin,  String destination,  String date,  String time)?  load,TResult Function()?  retry,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadTimetable() when load != null:
-return load(_that.origin,_that.destination,_that.date);case RetryTimetable() when retry != null:
+return load(_that.origin,_that.destination,_that.date,_that.time);case RetryTimetable() when retry != null:
 return retry();case _:
   return orElse();
 
@@ -144,10 +144,10 @@ return retry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String origin,  String destination,  String date)  load,required TResult Function()  retry,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String origin,  String destination,  String date,  String time)  load,required TResult Function()  retry,}) {final _that = this;
 switch (_that) {
 case LoadTimetable():
-return load(_that.origin,_that.destination,_that.date);case RetryTimetable():
+return load(_that.origin,_that.destination,_that.date,_that.time);case RetryTimetable():
 return retry();case _:
   throw StateError('Unexpected subclass');
 
@@ -165,10 +165,10 @@ return retry();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String origin,  String destination,  String date)?  load,TResult? Function()?  retry,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String origin,  String destination,  String date,  String time)?  load,TResult? Function()?  retry,}) {final _that = this;
 switch (_that) {
 case LoadTimetable() when load != null:
-return load(_that.origin,_that.destination,_that.date);case RetryTimetable() when retry != null:
+return load(_that.origin,_that.destination,_that.date,_that.time);case RetryTimetable() when retry != null:
 return retry();case _:
   return null;
 
@@ -181,12 +181,13 @@ return retry();case _:
 
 
 class LoadTimetable implements TimetableEvent {
-  const LoadTimetable({required this.origin, required this.destination, required this.date});
-  
+  const LoadTimetable({required this.origin, required this.destination, required this.date, this.time = ''});
+
 
  final  String origin;
  final  String destination;
  final  String date;
+ final  String time;
 
 /// Create a copy of TimetableEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -198,16 +199,16 @@ $LoadTimetableCopyWith<LoadTimetable> get copyWith => _$LoadTimetableCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadTimetable&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadTimetable&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,origin,destination,date);
+int get hashCode => Object.hash(runtimeType,origin,destination,date,time);
 
 @override
 String toString() {
-  return 'TimetableEvent.load(origin: $origin, destination: $destination, date: $date)';
+  return 'TimetableEvent.load(origin: $origin, destination: $destination, date: $date, time: $time)';
 }
 
 
@@ -218,7 +219,7 @@ abstract mixin class $LoadTimetableCopyWith<$Res> implements $TimetableEventCopy
   factory $LoadTimetableCopyWith(LoadTimetable value, $Res Function(LoadTimetable) _then) = _$LoadTimetableCopyWithImpl;
 @useResult
 $Res call({
- String origin, String destination, String date
+ String origin, String destination, String date, String time
 });
 
 
@@ -235,11 +236,12 @@ class _$LoadTimetableCopyWithImpl<$Res>
 
 /// Create a copy of TimetableEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? origin = null,Object? destination = null,Object? date = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? origin = null,Object? destination = null,Object? date = null,Object? time = null,}) {
   return _then(LoadTimetable(
 origin: null == origin ? _self.origin : origin // ignore: cast_nullable_to_non_nullable
 as String,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
 as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
+as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

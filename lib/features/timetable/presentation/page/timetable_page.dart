@@ -12,6 +12,7 @@ class TimetablePage extends StatelessWidget {
   final String origin;
   final String destination;
   final String date;
+  final String time;
   final String originName;
   final String destinationName;
 
@@ -20,6 +21,7 @@ class TimetablePage extends StatelessWidget {
     required this.origin,
     required this.destination,
     required this.date,
+    this.time = '',
     required this.originName,
     required this.destinationName,
   });
@@ -32,11 +34,13 @@ class TimetablePage extends StatelessWidget {
           origin: origin,
           destination: destination,
           date: date,
+          time: time,
         )),
       child: _TimetableView(
         originName: originName,
         destinationName: destinationName,
         date: date,
+        time: time,
       ),
     );
   }
@@ -46,11 +50,13 @@ class _TimetableView extends StatelessWidget {
   final String originName;
   final String destinationName;
   final String date;
+  final String time;
 
   const _TimetableView({
     required this.originName,
     required this.destinationName,
     required this.date,
+    required this.time,
   });
 
   String _formatDate(String date) {
@@ -208,9 +214,11 @@ class _TimetableView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Date
+          // Date + time filter hint
           Text(
-            _formatDate(date),
+            time.isNotEmpty
+                ? '${_formatDate(date)}　出發 $time 後'
+                : _formatDate(date),
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 13,

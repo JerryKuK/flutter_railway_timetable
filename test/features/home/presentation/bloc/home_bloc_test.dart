@@ -7,29 +7,44 @@ import 'package:flutter_railway_timetable/features/home/domain/repository/recent
 import 'package:flutter_railway_timetable/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter_railway_timetable/features/home/presentation/bloc/home_event.dart';
 import 'package:flutter_railway_timetable/features/home/presentation/bloc/home_state.dart';
+import 'package:flutter_railway_timetable/features/timetable/domain/entity/station.dart';
+import 'package:flutter_railway_timetable/features/timetable/domain/repository/timetable_repository.dart';
 
-@GenerateMocks([RecentSearchRepository])
+@GenerateMocks([RecentSearchRepository, TimetableRepository])
 import 'home_bloc_test.mocks.dart';
 
 void main() {
   late MockRecentSearchRepository mockRepo;
+  late MockTimetableRepository mockTimetableRepo;
   late HomeBloc homeBloc;
 
   final tDate = '2026/04/06';
   final tTime = '08:30';
 
+  final tStations = [
+    const Station(stationId: '1000', stationName: '台北', city: '臺北市'),
+    const Station(stationId: '9000', stationName: '高雄', city: '高雄市'),
+  ];
+
   setUp(() {
     mockRepo = MockRecentSearchRepository();
+    mockTimetableRepo = MockTimetableRepository();
     when(mockRepo.getRecentSearches()).thenAnswer((_) async => []);
-    homeBloc = HomeBloc(mockRepo, initialDate: tDate, initialTime: tTime);
+    when(mockTimetableRepo.getStations()).thenAnswer((_) async => tStations);
+    homeBloc = HomeBloc(
+      mockRepo,
+      mockTimetableRepo,
+      initialDate: tDate,
+      initialTime: tTime,
+    );
   });
 
   tearDown(() => homeBloc.close());
 
   group('HomeBloc', () {
     test('initial state has default stations', () {
-      expect(homeBloc.state.departureStation, '台北車站');
-      expect(homeBloc.state.arrivalStation, '高雄車站');
+      expect(homeBloc.state.departureStation, '台北');
+      expect(homeBloc.state.arrivalStation, '高雄');
     });
 
     blocTest<HomeBloc, HomeState>(
@@ -38,8 +53,8 @@ void main() {
       act: (bloc) => bloc.add(const HomeEvent.swapStations()),
       expect: () => [
         isA<HomeState>()
-            .having((s) => s.departureStation, 'departure', '高雄車站')
-            .having((s) => s.arrivalStation, 'arrival', '台北車站'),
+            .having((s) => s.departureStation, 'departure', '高雄')
+            .having((s) => s.arrivalStation, 'arrival', '台北'),
       ],
     );
 
@@ -108,6 +123,68 @@ void main() {
           'navigateToTimetable',
           true,
         ),
+      ],
+    );
+
+    test('LoadStations 成功時更新 stations 並將 isLoadingStations 設為 false', () async {
+      when(mockTimetableRepo.getStations()).thenAnswer((_) async => tStations);
+      final bloc = HomeBloc(
+        mockRepo,
+        mockTimetableRepo,
+        initialDate: tDate,
+        initialTime: tTime,
+      );
+      // 等待所有 pending 事件（loadRecentSearches + loadStations）完成
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+      expect(bloc.state.stations.length, 2);
+      expect(bloc.state.isLoadingStations, false);
+      expect(bloc.state.stationsError, isNull);
+      await bloc.close();
+    });
+
+    test('LoadStations 失敗時設定 stationsError', () async {
+      when(mockTimetableRepo.getStations()).thenThrow(Exception('Network error'));
+      final bloc = HomeBloc(
+        mockRepo,
+        mockTimetableRepo,
+        initialDate: tDate,
+        initialTime: tTime,
+      );
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+      expect(bloc.state.stationsError, isNotNull);
+      expect(bloc.state.isLoadingStations, false);
+      await bloc.close();
+    });
+
+    blocTest<HomeBloc, HomeState>(
+      'SelectDepartureStation 更新出發站',
+      build: () => homeBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.selectDepartureStation(
+          const Station(stationId: '2000', stationName: '松山', city: '臺北市'),
+        ),
+      ),
+      expect: () => [
+        isA<HomeState>()
+            .having((s) => s.departureStation, 'departure', '松山')
+            .having((s) => s.departureStationId, 'departureId', '2000'),
+      ],
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'SelectArrivalStation 更新到達站',
+      build: () => homeBloc,
+      act: (bloc) => bloc.add(
+        HomeEvent.selectArrivalStation(
+          const Station(stationId: '3000', stationName: '板橋', city: '新北市'),
+        ),
+      ),
+      expect: () => [
+        isA<HomeState>()
+            .having((s) => s.arrivalStation, 'arrival', '板橋')
+            .having((s) => s.arrivalStationId, 'arrivalId', '3000'),
       ],
     );
   });

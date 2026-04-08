@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Station {
 
- String get stationId; String get stationName;
+ String get stationId; String get stationName; String get city;
 /// Create a copy of Station
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $StationCopyWith<Station> get copyWith => _$StationCopyWithImpl<Station>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Station&&(identical(other.stationId, stationId) || other.stationId == stationId)&&(identical(other.stationName, stationName) || other.stationName == stationName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Station&&(identical(other.stationId, stationId) || other.stationId == stationId)&&(identical(other.stationName, stationName) || other.stationName == stationName)&&(identical(other.city, city) || other.city == city));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stationId,stationName);
+int get hashCode => Object.hash(runtimeType,stationId,stationName,city);
 
 @override
 String toString() {
-  return 'Station(stationId: $stationId, stationName: $stationName)';
+  return 'Station(stationId: $stationId, stationName: $stationName, city: $city)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $StationCopyWith<$Res>  {
   factory $StationCopyWith(Station value, $Res Function(Station) _then) = _$StationCopyWithImpl;
 @useResult
 $Res call({
- String stationId, String stationName
+ String stationId, String stationName, String city
 });
 
 
@@ -62,10 +62,11 @@ class _$StationCopyWithImpl<$Res>
 
 /// Create a copy of Station
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? stationId = null,Object? stationName = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? stationId = null,Object? stationName = null,Object? city = null,}) {
   return _then(_self.copyWith(
 stationId: null == stationId ? _self.stationId : stationId // ignore: cast_nullable_to_non_nullable
 as String,stationName: null == stationName ? _self.stationName : stationName // ignore: cast_nullable_to_non_nullable
+as String,city: null == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -151,10 +152,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String stationId,  String stationName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String stationId,  String stationName,  String city)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Station() when $default != null:
-return $default(_that.stationId,_that.stationName);case _:
+return $default(_that.stationId,_that.stationName,_that.city);case _:
   return orElse();
 
 }
@@ -172,10 +173,10 @@ return $default(_that.stationId,_that.stationName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String stationId,  String stationName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String stationId,  String stationName,  String city)  $default,) {final _that = this;
 switch (_that) {
 case _Station():
-return $default(_that.stationId,_that.stationName);case _:
+return $default(_that.stationId,_that.stationName,_that.city);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -192,10 +193,10 @@ return $default(_that.stationId,_that.stationName);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String stationId,  String stationName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String stationId,  String stationName,  String city)?  $default,) {final _that = this;
 switch (_that) {
 case _Station() when $default != null:
-return $default(_that.stationId,_that.stationName);case _:
+return $default(_that.stationId,_that.stationName,_that.city);case _:
   return null;
 
 }
@@ -207,11 +208,12 @@ return $default(_that.stationId,_that.stationName);case _:
 
 
 class _Station implements Station {
-  const _Station({required this.stationId, required this.stationName});
+  const _Station({required this.stationId, required this.stationName, this.city = ''});
   
 
 @override final  String stationId;
 @override final  String stationName;
+@override@JsonKey() final  String city;
 
 /// Create a copy of Station
 /// with the given fields replaced by the non-null parameter values.
@@ -223,16 +225,16 @@ _$StationCopyWith<_Station> get copyWith => __$StationCopyWithImpl<_Station>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Station&&(identical(other.stationId, stationId) || other.stationId == stationId)&&(identical(other.stationName, stationName) || other.stationName == stationName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Station&&(identical(other.stationId, stationId) || other.stationId == stationId)&&(identical(other.stationName, stationName) || other.stationName == stationName)&&(identical(other.city, city) || other.city == city));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stationId,stationName);
+int get hashCode => Object.hash(runtimeType,stationId,stationName,city);
 
 @override
 String toString() {
-  return 'Station(stationId: $stationId, stationName: $stationName)';
+  return 'Station(stationId: $stationId, stationName: $stationName, city: $city)';
 }
 
 
@@ -243,7 +245,7 @@ abstract mixin class _$StationCopyWith<$Res> implements $StationCopyWith<$Res> {
   factory _$StationCopyWith(_Station value, $Res Function(_Station) _then) = __$StationCopyWithImpl;
 @override @useResult
 $Res call({
- String stationId, String stationName
+ String stationId, String stationName, String city
 });
 
 
@@ -260,10 +262,11 @@ class __$StationCopyWithImpl<$Res>
 
 /// Create a copy of Station
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? stationId = null,Object? stationName = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? stationId = null,Object? stationName = null,Object? city = null,}) {
   return _then(_Station(
 stationId: null == stationId ? _self.stationId : stationId // ignore: cast_nullable_to_non_nullable
 as String,stationName: null == stationName ? _self.stationName : stationName // ignore: cast_nullable_to_non_nullable
+as String,city: null == city ? _self.city : city // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

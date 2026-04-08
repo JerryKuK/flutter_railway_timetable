@@ -27,6 +27,7 @@ final appRouter = GoRouter(
                 origin: origin,
                 destination: destination,
                 date: extra?['date'] as String? ?? '',
+                time: extra?['time'] as String? ?? '',
                 originName: extra?['originName'] as String? ?? origin,
                 destinationName:
                     extra?['destinationName'] as String? ?? destination,

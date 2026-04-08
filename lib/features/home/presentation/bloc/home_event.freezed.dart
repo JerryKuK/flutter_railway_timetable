@@ -55,7 +55,7 @@ extension HomeEventPatterns on HomeEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SwapStations value)?  swapStations,TResult Function( UpdateDate value)?  updateDate,TResult Function( UpdateTime value)?  updateTime,TResult Function( Search value)?  search,TResult Function( ClearHistory value)?  clearHistory,TResult Function( SelectRecentSearch value)?  selectRecentSearch,TResult Function( LoadRecentSearches value)?  loadRecentSearches,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SwapStations value)?  swapStations,TResult Function( UpdateDate value)?  updateDate,TResult Function( UpdateTime value)?  updateTime,TResult Function( Search value)?  search,TResult Function( ClearHistory value)?  clearHistory,TResult Function( SelectRecentSearch value)?  selectRecentSearch,TResult Function( LoadRecentSearches value)?  loadRecentSearches,TResult Function( LoadStations value)?  loadStations,TResult Function( SelectDepartureStation value)?  selectDepartureStation,TResult Function( SelectArrivalStation value)?  selectArrivalStation,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case SwapStations() when swapStations != null:
@@ -65,7 +65,10 @@ return updateTime(_that);case Search() when search != null:
 return search(_that);case ClearHistory() when clearHistory != null:
 return clearHistory(_that);case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that);case LoadRecentSearches() when loadRecentSearches != null:
-return loadRecentSearches(_that);case _:
+return loadRecentSearches(_that);case LoadStations() when loadStations != null:
+return loadStations(_that);case SelectDepartureStation() when selectDepartureStation != null:
+return selectDepartureStation(_that);case SelectArrivalStation() when selectArrivalStation != null:
+return selectArrivalStation(_that);case _:
   return orElse();
 
 }
@@ -83,7 +86,7 @@ return loadRecentSearches(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SwapStations value)  swapStations,required TResult Function( UpdateDate value)  updateDate,required TResult Function( UpdateTime value)  updateTime,required TResult Function( Search value)  search,required TResult Function( ClearHistory value)  clearHistory,required TResult Function( SelectRecentSearch value)  selectRecentSearch,required TResult Function( LoadRecentSearches value)  loadRecentSearches,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SwapStations value)  swapStations,required TResult Function( UpdateDate value)  updateDate,required TResult Function( UpdateTime value)  updateTime,required TResult Function( Search value)  search,required TResult Function( ClearHistory value)  clearHistory,required TResult Function( SelectRecentSearch value)  selectRecentSearch,required TResult Function( LoadRecentSearches value)  loadRecentSearches,required TResult Function( LoadStations value)  loadStations,required TResult Function( SelectDepartureStation value)  selectDepartureStation,required TResult Function( SelectArrivalStation value)  selectArrivalStation,}){
 final _that = this;
 switch (_that) {
 case SwapStations():
@@ -93,7 +96,10 @@ return updateTime(_that);case Search():
 return search(_that);case ClearHistory():
 return clearHistory(_that);case SelectRecentSearch():
 return selectRecentSearch(_that);case LoadRecentSearches():
-return loadRecentSearches(_that);case _:
+return loadRecentSearches(_that);case LoadStations():
+return loadStations(_that);case SelectDepartureStation():
+return selectDepartureStation(_that);case SelectArrivalStation():
+return selectArrivalStation(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -110,7 +116,7 @@ return loadRecentSearches(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SwapStations value)?  swapStations,TResult? Function( UpdateDate value)?  updateDate,TResult? Function( UpdateTime value)?  updateTime,TResult? Function( Search value)?  search,TResult? Function( ClearHistory value)?  clearHistory,TResult? Function( SelectRecentSearch value)?  selectRecentSearch,TResult? Function( LoadRecentSearches value)?  loadRecentSearches,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SwapStations value)?  swapStations,TResult? Function( UpdateDate value)?  updateDate,TResult? Function( UpdateTime value)?  updateTime,TResult? Function( Search value)?  search,TResult? Function( ClearHistory value)?  clearHistory,TResult? Function( SelectRecentSearch value)?  selectRecentSearch,TResult? Function( LoadRecentSearches value)?  loadRecentSearches,TResult? Function( LoadStations value)?  loadStations,TResult? Function( SelectDepartureStation value)?  selectDepartureStation,TResult? Function( SelectArrivalStation value)?  selectArrivalStation,}){
 final _that = this;
 switch (_that) {
 case SwapStations() when swapStations != null:
@@ -120,7 +126,10 @@ return updateTime(_that);case Search() when search != null:
 return search(_that);case ClearHistory() when clearHistory != null:
 return clearHistory(_that);case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that);case LoadRecentSearches() when loadRecentSearches != null:
-return loadRecentSearches(_that);case _:
+return loadRecentSearches(_that);case LoadStations() when loadStations != null:
+return loadStations(_that);case SelectDepartureStation() when selectDepartureStation != null:
+return selectDepartureStation(_that);case SelectArrivalStation() when selectArrivalStation != null:
+return selectArrivalStation(_that);case _:
   return null;
 
 }
@@ -137,7 +146,7 @@ return loadRecentSearches(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function()?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function()?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,TResult Function()?  loadStations,TResult Function( Station station)?  selectDepartureStation,TResult Function( Station station)?  selectArrivalStation,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SwapStations() when swapStations != null:
 return swapStations();case UpdateDate() when updateDate != null:
@@ -146,7 +155,10 @@ return updateTime(_that.time);case Search() when search != null:
 return search();case ClearHistory() when clearHistory != null:
 return clearHistory();case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that.search);case LoadRecentSearches() when loadRecentSearches != null:
-return loadRecentSearches();case _:
+return loadRecentSearches();case LoadStations() when loadStations != null:
+return loadStations();case SelectDepartureStation() when selectDepartureStation != null:
+return selectDepartureStation(_that.station);case SelectArrivalStation() when selectArrivalStation != null:
+return selectArrivalStation(_that.station);case _:
   return orElse();
 
 }
@@ -164,7 +176,7 @@ return loadRecentSearches();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function()  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function()  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,required TResult Function()  loadStations,required TResult Function( Station station)  selectDepartureStation,required TResult Function( Station station)  selectArrivalStation,}) {final _that = this;
 switch (_that) {
 case SwapStations():
 return swapStations();case UpdateDate():
@@ -173,7 +185,10 @@ return updateTime(_that.time);case Search():
 return search();case ClearHistory():
 return clearHistory();case SelectRecentSearch():
 return selectRecentSearch(_that.search);case LoadRecentSearches():
-return loadRecentSearches();case _:
+return loadRecentSearches();case LoadStations():
+return loadStations();case SelectDepartureStation():
+return selectDepartureStation(_that.station);case SelectArrivalStation():
+return selectArrivalStation(_that.station);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -190,7 +205,7 @@ return loadRecentSearches();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function()?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function()?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,TResult? Function()?  loadStations,TResult? Function( Station station)?  selectDepartureStation,TResult? Function( Station station)?  selectArrivalStation,}) {final _that = this;
 switch (_that) {
 case SwapStations() when swapStations != null:
 return swapStations();case UpdateDate() when updateDate != null:
@@ -199,7 +214,10 @@ return updateTime(_that.time);case Search() when search != null:
 return search();case ClearHistory() when clearHistory != null:
 return clearHistory();case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that.search);case LoadRecentSearches() when loadRecentSearches != null:
-return loadRecentSearches();case _:
+return loadRecentSearches();case LoadStations() when loadStations != null:
+return loadStations();case SelectDepartureStation() when selectDepartureStation != null:
+return selectDepartureStation(_that.station);case SelectArrivalStation() when selectArrivalStation != null:
+return selectArrivalStation(_that.station);case _:
   return null;
 
 }
@@ -541,5 +559,187 @@ String toString() {
 
 
 
+
+/// @nodoc
+
+
+class LoadStations implements HomeEvent {
+  const LoadStations();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadStations);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'HomeEvent.loadStations()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class SelectDepartureStation implements HomeEvent {
+  const SelectDepartureStation(this.station);
+  
+
+ final  Station station;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SelectDepartureStationCopyWith<SelectDepartureStation> get copyWith => _$SelectDepartureStationCopyWithImpl<SelectDepartureStation>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SelectDepartureStation&&(identical(other.station, station) || other.station == station));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,station);
+
+@override
+String toString() {
+  return 'HomeEvent.selectDepartureStation(station: $station)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SelectDepartureStationCopyWith<$Res> implements $HomeEventCopyWith<$Res> {
+  factory $SelectDepartureStationCopyWith(SelectDepartureStation value, $Res Function(SelectDepartureStation) _then) = _$SelectDepartureStationCopyWithImpl;
+@useResult
+$Res call({
+ Station station
+});
+
+
+$StationCopyWith<$Res> get station;
+
+}
+/// @nodoc
+class _$SelectDepartureStationCopyWithImpl<$Res>
+    implements $SelectDepartureStationCopyWith<$Res> {
+  _$SelectDepartureStationCopyWithImpl(this._self, this._then);
+
+  final SelectDepartureStation _self;
+  final $Res Function(SelectDepartureStation) _then;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? station = null,}) {
+  return _then(SelectDepartureStation(
+null == station ? _self.station : station // ignore: cast_nullable_to_non_nullable
+as Station,
+  ));
+}
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$StationCopyWith<$Res> get station {
+  
+  return $StationCopyWith<$Res>(_self.station, (value) {
+    return _then(_self.copyWith(station: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class SelectArrivalStation implements HomeEvent {
+  const SelectArrivalStation(this.station);
+  
+
+ final  Station station;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SelectArrivalStationCopyWith<SelectArrivalStation> get copyWith => _$SelectArrivalStationCopyWithImpl<SelectArrivalStation>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SelectArrivalStation&&(identical(other.station, station) || other.station == station));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,station);
+
+@override
+String toString() {
+  return 'HomeEvent.selectArrivalStation(station: $station)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SelectArrivalStationCopyWith<$Res> implements $HomeEventCopyWith<$Res> {
+  factory $SelectArrivalStationCopyWith(SelectArrivalStation value, $Res Function(SelectArrivalStation) _then) = _$SelectArrivalStationCopyWithImpl;
+@useResult
+$Res call({
+ Station station
+});
+
+
+$StationCopyWith<$Res> get station;
+
+}
+/// @nodoc
+class _$SelectArrivalStationCopyWithImpl<$Res>
+    implements $SelectArrivalStationCopyWith<$Res> {
+  _$SelectArrivalStationCopyWithImpl(this._self, this._then);
+
+  final SelectArrivalStation _self;
+  final $Res Function(SelectArrivalStation) _then;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? station = null,}) {
+  return _then(SelectArrivalStation(
+null == station ? _self.station : station // ignore: cast_nullable_to_non_nullable
+as Station,
+  ));
+}
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$StationCopyWith<$Res> get station {
+  
+  return $StationCopyWith<$Res>(_self.station, (value) {
+    return _then(_self.copyWith(station: value));
+  });
+}
+}
 
 // dart format on

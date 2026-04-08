@@ -1,5 +1,7 @@
 context platform=ios device="iPhone 16 Pro" kind=simulator theme=unknown
 open "臺鐵時刻表" --relaunch
+snapshot
 click "role=\"statictext\" label=\"查詢班次\" || label=\"查詢班次\""
-wait "自強" 15000
-close
+wait 5000
+snapshot
+scroll down

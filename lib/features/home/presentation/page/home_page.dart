@@ -8,7 +8,9 @@ import '../bloc/home_state.dart';
 import '../widget/station_input_widget.dart';
 import '../widget/date_time_row_widget.dart';
 import '../widget/recent_search_list_widget.dart';
+import '../widget/station_picker_modal.dart';
 import '../../../../core/di/injection.dart';
+import '../../../timetable/domain/repository/timetable_repository.dart';
 import '../../domain/repository/recent_search_repository.dart';
 
 class HomePage extends StatelessWidget {
@@ -19,6 +21,7 @@ class HomePage extends StatelessWidget {
     return BlocProvider(
       create: (_) => HomeBloc(
         getIt<RecentSearchRepository>(),
+        getIt<TimetableRepository>(),
         initialDate: DateFormat('yyyy/MM/dd').format(DateTime.now()),
         initialTime: DateFormat('HH:mm').format(DateTime.now()),
       ),
@@ -41,6 +44,7 @@ class _HomeView extends StatelessWidget {
             'origin': state.departureStationId,
             'destination': state.arrivalStationId,
             'date': state.date.replaceAll('/', '-'),
+            'time': state.time,
             'originName': state.departureStation,
             'destinationName': state.arrivalStation,
           },
@@ -141,7 +145,11 @@ class _HomeView extends StatelessWidget {
             label: '出發站',
             stationName: state.departureStation,
             dotColor: const Color(0xFF4A90D9),
-            onTap: null,
+            onTap: () => _openStationPicker(
+              context,
+              state,
+              isDeparture: true,
+            ),
           ),
           const SizedBox(height: 4),
           _buildDividerRow(context),
@@ -150,11 +158,45 @@ class _HomeView extends StatelessWidget {
             label: '到達站',
             stationName: state.arrivalStation,
             dotColor: const Color(0xFFE74C3C),
-            onTap: null,
+            onTap: () => _openStationPicker(
+              context,
+              state,
+              isDeparture: false,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _openStationPicker(
+    BuildContext context,
+    HomeState state, {
+    required bool isDeparture,
+  }) async {
+    final bloc = context.read<HomeBloc>();
+    final selected = await showStationPickerModal(
+      context,
+      title: isDeparture ? '選擇出發站' : '選擇到達站',
+      stations: state.stations,
+      selectedStationId: isDeparture
+          ? state.departureStationId
+          : state.arrivalStationId,
+      isLoading: state.isLoadingStations,
+      errorMessage: state.stationsError,
+      onRetry: () {
+        Navigator.of(context).pop();
+        bloc.add(const HomeEvent.loadStations());
+      },
+    );
+
+    if (selected != null) {
+      if (isDeparture) {
+        bloc.add(HomeEvent.selectDepartureStation(selected));
+      } else {
+        bloc.add(HomeEvent.selectArrivalStation(selected));
+      }
+    }
   }
 
   Widget _buildDividerRow(BuildContext context) {
@@ -227,7 +269,6 @@ class _HomeView extends StatelessWidget {
       );
       return;
     }
-    // Navigation happens via BlocListener after save completes
     context.read<HomeBloc>().add(const HomeEvent.search());
   }
 }

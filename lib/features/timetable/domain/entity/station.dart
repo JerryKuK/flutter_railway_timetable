@@ -7,5 +7,6 @@ abstract class Station with _$Station {
   const factory Station({
     required String stationId,
     required String stationName,
+    @Default('') String city,
   }) = _Station;
 }

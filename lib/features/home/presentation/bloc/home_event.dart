@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../../features/timetable/domain/entity/station.dart';
 import '../../domain/entity/recent_search.dart';
 
 part 'home_event.freezed.dart';
@@ -13,4 +14,9 @@ abstract class HomeEvent with _$HomeEvent {
   const factory HomeEvent.selectRecentSearch(RecentSearch search) =
       SelectRecentSearch;
   const factory HomeEvent.loadRecentSearches() = LoadRecentSearches;
+  const factory HomeEvent.loadStations() = LoadStations;
+  const factory HomeEvent.selectDepartureStation(Station station) =
+      SelectDepartureStation;
+  const factory HomeEvent.selectArrivalStation(Station station) =
+      SelectArrivalStation;
 }

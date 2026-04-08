@@ -14,6 +14,7 @@ context: |
   - openspec/specs/common/spec.md（全域通用規格）
   - openspec/specs/architecture/spec.md（架構規格）
   - openspec/specs/api/spec.md（API 規格）
+  - openspec/specs/**/spec.md
   這些規格文件定義了整個專案的規範與慣例，所有新 change 的提案與實作都必須遵循這些規格。
 
 # Per-artifact rules (optional)

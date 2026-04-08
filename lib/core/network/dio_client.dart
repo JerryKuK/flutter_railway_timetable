@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'tdx_auth_interceptor.dart';
 
 class DioClient {
@@ -22,6 +23,17 @@ class DioClient {
         clientSecret: tdxClientSecret,
       ),
     );
+
+    if (kDebugMode) {
+      dio.interceptors.add(LogInterceptor(
+        requestHeader: false,
+        requestBody: false,
+        responseHeader: false,
+        responseBody: true,
+        error: true,
+        logPrint: (obj) => debugPrint('[Dio] $obj'),
+      ));
+    }
 
     return dio;
   }

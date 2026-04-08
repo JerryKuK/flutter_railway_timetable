@@ -7,7 +7,7 @@ import 'dart:async' as _i3;
 
 import 'package:flutter_railway_timetable/features/timetable/data/datasource/tdx_tra_api_service.dart'
     as _i2;
-import 'package:flutter_railway_timetable/features/timetable/data/dto/train_timetable_dto.dart'
+import 'package:flutter_railway_timetable/features/timetable/data/dto/tdx_response_dto.dart'
     as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -34,30 +34,34 @@ class MockTdxTraApiService extends _i1.Mock implements _i2.TdxTraApiService {
   }
 
   @override
-  _i3.Future<List<_i4.TrainTimetableDto>> getDailyTimetable(
+  _i3.Future<_i4.TdxTimetableResponseDto> getDailyTimetable(
     String? origin,
     String? destination,
-    String? trainDate,
-  ) =>
+    String? trainDate, {
+    String? format = 'JSON',
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#getDailyTimetable, [
-              origin,
-              destination,
-              trainDate,
-            ]),
-            returnValue: _i3.Future<List<_i4.TrainTimetableDto>>.value(
-              <_i4.TrainTimetableDto>[],
+            Invocation.method(
+              #getDailyTimetable,
+              [origin, destination, trainDate],
+              {#format: format},
+            ),
+            returnValue: _i3.Future<_i4.TdxTimetableResponseDto>.value(
+              const _i4.TdxTimetableResponseDto(),
             ),
           )
-          as _i3.Future<List<_i4.TrainTimetableDto>>);
+          as _i3.Future<_i4.TdxTimetableResponseDto>);
 
   @override
-  _i3.Future<List<_i4.StationDto>> getStations() =>
+  _i3.Future<List<_i4.TdxStationDto>> getStations({
+    String? format = 'JSON',
+    int? top = 500,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#getStations, []),
-            returnValue: _i3.Future<List<_i4.StationDto>>.value(
-              <_i4.StationDto>[],
+            Invocation.method(#getStations, [], {#format: format, #top: top}),
+            returnValue: _i3.Future<List<_i4.TdxStationDto>>.value(
+              <_i4.TdxStationDto>[],
             ),
           )
-          as _i3.Future<List<_i4.StationDto>>);
+          as _i3.Future<List<_i4.TdxStationDto>>);
 }
