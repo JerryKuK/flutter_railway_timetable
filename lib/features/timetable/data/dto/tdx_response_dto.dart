@@ -82,13 +82,60 @@ class TdxTrainInfoDto {
   final String trainNo;
   @JsonKey(name: 'TrainTypeName')
   final MultilingualName? trainTypeName;
+  @JsonKey(name: 'TrainTypeID')
+  final String? trainTypeId;
 
-  const TdxTrainInfoDto({this.trainNo = '', this.trainTypeName});
+  const TdxTrainInfoDto({this.trainNo = '', this.trainTypeName, this.trainTypeId});
 
   factory TdxTrainInfoDto.fromJson(Map<String, dynamic> json) =>
       _$TdxTrainInfoDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$TdxTrainInfoDtoToJson(this);
+}
+
+// ── ODFare v2 DTOs ────────────────────────────────────────────────────────
+
+/// v2 OD 票價項目（單一 OD 對的票價清單）
+@JsonSerializable()
+class TdxODFareItemDto {
+  @JsonKey(name: 'OriginStationID')
+  final String originStationId;
+  @JsonKey(name: 'DestinationStationID')
+  final String destinationStationId;
+  @JsonKey(name: 'Fares')
+  final List<TdxFareDto> fares;
+
+  const TdxODFareItemDto({
+    this.originStationId = '',
+    this.destinationStationId = '',
+    this.fares = const [],
+  });
+
+  factory TdxODFareItemDto.fromJson(Map<String, dynamic> json) =>
+      _$TdxODFareItemDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TdxODFareItemDtoToJson(this);
+}
+
+/// 單筆票價資料（TDX ODFare v2 真實格式）
+/// TicketType 為兩字中文碼：首字=票種（成/孩/愛孩），次字=車種（自/莒/復/普）
+/// 例：「成自」= 成人自強票，「成莒」= 成人莒光票
+@JsonSerializable()
+class TdxFareDto {
+  @JsonKey(name: 'TicketType')
+  final String ticketType;
+  @JsonKey(name: 'Price')
+  final int price;
+
+  const TdxFareDto({
+    this.ticketType = '',
+    this.price = 0,
+  });
+
+  factory TdxFareDto.fromJson(Map<String, dynamic> json) =>
+      _$TdxFareDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TdxFareDtoToJson(this);
 }
 
 /// v3 停靠站時刻（OD 端點中 [0]=出發站，[last]=到達站）

@@ -1,0 +1,12 @@
+context platform=ios device="iPhone 17 Pro" kind=simulator theme=unknown
+open "com.example.flutterRailwayTimetable" --relaunch
+click "role=\"statictext\" label=\"苗栗 → 銅鑼\" || label=\"苗栗 → 銅鑼\""
+click "role=\"statictext\" label=\"查詢班次\" || label=\"查詢班次\""
+click "role=\"button\" label=\"首頁\\nTab 1 of 4\" || label=\"首頁\\nTab 1 of 4\""
+click "role=\"statictext\" label=\"台北 → 高雄\" || label=\"台北 → 高雄\""
+click "role=\"statictext\" label=\"查詢班次\" || label=\"查詢班次\""
+open "com.example.flutterRailwayTimetable" --relaunch
+click "role=\"statictext\" label=\"台北 → 高雄\" || label=\"台北 → 高雄\""
+click "role=\"statictext\" label=\"查詢班次\" || label=\"查詢班次\""
+scroll "down" 3
+close "com.example.flutterRailwayTimetable"

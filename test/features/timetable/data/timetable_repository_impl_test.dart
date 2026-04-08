@@ -57,6 +57,18 @@ void main() {
       );
     }
 
+    /// 建立 ODFare 回應：單筆 OD 票價清單
+    List<TdxODFareItemDto> makeODFareResponse(
+        List<TdxFareDto> fares) {
+      return [
+        TdxODFareItemDto(
+          originStationId: origin,
+          destinationStationId: destination,
+          fares: fares,
+        ),
+      ];
+    }
+
     test('returns list of Train entities on success', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async => makeResponse(
@@ -65,6 +77,8 @@ void main() {
                 depTime: '08:15',
                 arrTime: '11:57',
               ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
 
       final result = await repository.getDailyTimetable(
         origin: origin,
@@ -84,6 +98,8 @@ void main() {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async =>
               const TdxTimetableResponseDto(trainTimetables: []));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
 
       final result = await repository.getDailyTimetable(
         origin: origin,
@@ -108,10 +124,42 @@ void main() {
       );
     });
 
-    test('fare 固定為 0（OD 時刻表 API 不含票價）', () async {
+    test('fare 來自 ODFare API，依 TrainTypeID 對應票價', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
-          .thenAnswer((_) async =>
-              makeResponse(trainNo: '172', depTime: '09:00', arrTime: '12:00'));
+          .thenAnswer((_) async => TdxTimetableResponseDto(
+                trainTimetables: [
+                  TdxTrainTimetableDto(
+                    trainInfo: TdxTrainInfoDto(
+                      trainNo: '171',
+                      trainTypeName:
+                          const MultilingualName(zhTw: '自強3000', en: ''),
+                      trainTypeId: '3',
+                    ),
+                    stopTimes: [
+                      TdxStopTimeDto(
+                        stationId: origin,
+                        departureTime: '08:15',
+                        arrivalTime: '08:15',
+                      ),
+                      TdxStopTimeDto(
+                        stationId: destination,
+                        departureTime: '11:57',
+                        arrivalTime: '11:57',
+                      ),
+                    ],
+                  ),
+                ],
+              ));
+      // 模擬真實 TDX 回應：含孩童票與折扣票（成自折），確認只取成人全票
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => makeODFareResponse([
+                const TdxFareDto(ticketType: '成自', price: 843),
+                const TdxFareDto(ticketType: '孩自', price: 422),
+                const TdxFareDto(ticketType: '愛孩自', price: 422),
+                const TdxFareDto(ticketType: '成自折', price: 422), // 折扣票，不應覆蓋全票
+                const TdxFareDto(ticketType: '孩自折', price: 0),
+                const TdxFareDto(ticketType: '成莒', price: 636),
+              ]));
 
       final result = await repository.getDailyTimetable(
         origin: origin,
@@ -119,13 +167,75 @@ void main() {
         date: date,
       );
 
+      expect(result.first.fare, 843);
+    });
+
+    test('ODFare API 失敗時，班次仍正常回傳，fare 為 0', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenAnswer((_) async => makeResponse(
+                trainNo: '172',
+                trainType: '自強3000',
+                depTime: '09:00',
+                arrTime: '12:00',
+              ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenThrow(Exception('ODFare network error'));
+
+      final result = await repository.getDailyTimetable(
+        origin: origin,
+        destination: destination,
+        date: date,
+      );
+
+      expect(result.length, 1);
       expect(result.first.fare, 0);
+    });
+
+    test('區間車與區間快 fare 同樣對應至 成普 票價', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenAnswer((_) async => TdxTimetableResponseDto(
+                trainTimetables: [
+                  TdxTrainTimetableDto(
+                    trainInfo: const TdxTrainInfoDto(
+                      trainNo: '4001',
+                      trainTypeName: MultilingualName(zhTw: '區間', en: ''),
+                    ),
+                    stopTimes: [
+                      TdxStopTimeDto(
+                          stationId: origin,
+                          departureTime: '08:00',
+                          arrivalTime: '08:00'),
+                      TdxStopTimeDto(
+                          stationId: destination,
+                          departureTime: '08:30',
+                          arrivalTime: '08:30'),
+                    ],
+                  ),
+                ],
+              ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => makeODFareResponse([
+                const TdxFareDto(ticketType: '成自', price: 37),
+                const TdxFareDto(ticketType: '成莒', price: 28),
+                const TdxFareDto(ticketType: '成復', price: 24),
+                const TdxFareDto(ticketType: '成普', price: 11),
+              ]));
+
+      final result = await repository.getDailyTimetable(
+        origin: origin,
+        destination: destination,
+        date: date,
+      );
+
+      expect(result.first.fare, 11);
     });
 
     test('travelTime 由出發與到達時間計算', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async =>
               makeResponse(trainNo: '101', depTime: '08:00', arrTime: '10:30'));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
 
       final result = await repository.getDailyTimetable(
         origin: origin,

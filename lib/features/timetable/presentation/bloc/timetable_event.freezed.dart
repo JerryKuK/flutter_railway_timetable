@@ -182,12 +182,12 @@ return retry();case _:
 
 class LoadTimetable implements TimetableEvent {
   const LoadTimetable({required this.origin, required this.destination, required this.date, this.time = ''});
-
+  
 
  final  String origin;
  final  String destination;
  final  String date;
- final  String time;
+@JsonKey() final  String time;
 
 /// Create a copy of TimetableEvent
 /// with the given fields replaced by the non-null parameter values.

@@ -21,4 +21,11 @@ abstract class TdxTraApiService {
     @Query('\$format') String format = 'JSON',
     @Query('\$top') int top = 500,
   });
+
+  @GET('/api/basic/v2/Rail/TRA/ODFare/{originStationId}/to/{destinationStationId}')
+  Future<List<TdxODFareItemDto>> getODFare(
+    @Path('originStationId') String originStationId,
+    @Path('destinationStationId') String destinationStationId, {
+    @Query('\$format') String format = 'JSON',
+  });
 }

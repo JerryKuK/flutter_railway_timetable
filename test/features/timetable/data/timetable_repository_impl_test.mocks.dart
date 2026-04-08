@@ -3,12 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:flutter_railway_timetable/features/timetable/data/datasource/tdx_tra_api_service.dart'
-    as _i2;
+    as _i3;
 import 'package:flutter_railway_timetable/features/timetable/data/dto/tdx_response_dto.dart'
-    as _i4;
+    as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -25,16 +25,22 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeTdxTimetableResponseDto_0 extends _i1.SmartFake
+    implements _i2.TdxTimetableResponseDto {
+  _FakeTdxTimetableResponseDto_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [TdxTraApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTdxTraApiService extends _i1.Mock implements _i2.TdxTraApiService {
+class MockTdxTraApiService extends _i1.Mock implements _i3.TdxTraApiService {
   MockTdxTraApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i4.TdxTimetableResponseDto> getDailyTimetable(
+  _i4.Future<_i2.TdxTimetableResponseDto> getDailyTimetable(
     String? origin,
     String? destination,
     String? trainDate, {
@@ -46,22 +52,47 @@ class MockTdxTraApiService extends _i1.Mock implements _i2.TdxTraApiService {
               [origin, destination, trainDate],
               {#format: format},
             ),
-            returnValue: _i3.Future<_i4.TdxTimetableResponseDto>.value(
-              const _i4.TdxTimetableResponseDto(),
+            returnValue: _i4.Future<_i2.TdxTimetableResponseDto>.value(
+              _FakeTdxTimetableResponseDto_0(
+                this,
+                Invocation.method(
+                  #getDailyTimetable,
+                  [origin, destination, trainDate],
+                  {#format: format},
+                ),
+              ),
             ),
           )
-          as _i3.Future<_i4.TdxTimetableResponseDto>);
+          as _i4.Future<_i2.TdxTimetableResponseDto>);
 
   @override
-  _i3.Future<List<_i4.TdxStationDto>> getStations({
+  _i4.Future<List<_i2.TdxStationDto>> getStations({
     String? format = 'JSON',
     int? top = 500,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getStations, [], {#format: format, #top: top}),
-            returnValue: _i3.Future<List<_i4.TdxStationDto>>.value(
-              <_i4.TdxStationDto>[],
+            returnValue: _i4.Future<List<_i2.TdxStationDto>>.value(
+              <_i2.TdxStationDto>[],
             ),
           )
-          as _i3.Future<List<_i4.TdxStationDto>>);
+          as _i4.Future<List<_i2.TdxStationDto>>);
+
+  @override
+  _i4.Future<List<_i2.TdxODFareItemDto>> getODFare(
+    String? originStationId,
+    String? destinationStationId, {
+    String? format = 'JSON',
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #getODFare,
+              [originStationId, destinationStationId],
+              {#format: format},
+            ),
+            returnValue: _i4.Future<List<_i2.TdxODFareItemDto>>.value(
+              <_i2.TdxODFareItemDto>[],
+            ),
+          )
+          as _i4.Future<List<_i2.TdxODFareItemDto>>);
 }
