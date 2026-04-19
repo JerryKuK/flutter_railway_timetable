@@ -3,6 +3,7 @@ import '../../features/home/presentation/page/home_page.dart';
 import '../../features/timetable/presentation/page/timetable_page.dart';
 import '../../features/my_tickets/presentation/page/my_tickets_page.dart';
 import '../../features/profile/presentation/page/profile_page.dart';
+import '../enums/railway_type.dart';
 import '../widgets/app_shell.dart';
 
 final appRouter = GoRouter(
@@ -22,6 +23,10 @@ final appRouter = GoRouter(
             final extra = state.extra as Map<String, dynamic>?;
             final origin = extra?['origin'] as String? ?? '';
             final destination = extra?['destination'] as String? ?? '';
+            final railwayTypeStr = extra?['railwayType'] as String? ?? 'tra';
+            final railwayType = railwayTypeStr == 'hsr'
+                ? RailwayType.hsr
+                : RailwayType.tra;
             return NoTransitionPage(
               child: TimetablePage(
                 origin: origin,
@@ -31,6 +36,7 @@ final appRouter = GoRouter(
                 originName: extra?['originName'] as String? ?? origin,
                 destinationName:
                     extra?['destinationName'] as String? ?? destination,
+                railwayType: railwayType,
               ),
             );
           },

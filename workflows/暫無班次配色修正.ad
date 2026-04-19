@@ -1,0 +1,9 @@
+context platform=ios device="iPhone 17 Pro" kind=simulator
+open "com.example.flutterRailwayTimetable" --relaunch
+wait "時刻表" 5000
+click "role=\"text\" label=\"高鐵\nHSR\" || label=\"高鐵\nHSR\""
+wait "高鐵時刻表" 3000
+click "role=\"button\" label=\"時刻表\nTab 2 of 4\" || label=\"時刻表\nTab 2 of 4\""
+wait "暫無班次資料" 8000
+wait "重新查詢" 3000
+close "com.example.flutterRailwayTimetable"

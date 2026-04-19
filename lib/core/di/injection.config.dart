@@ -15,10 +15,16 @@ import 'package:flutter_railway_timetable/features/home/data/repository/recent_s
     as _i159;
 import 'package:flutter_railway_timetable/features/home/domain/repository/recent_search_repository.dart'
     as _i433;
+import 'package:flutter_railway_timetable/features/timetable/data/datasource/tdx_thsr_api_service.dart'
+    as _i628;
 import 'package:flutter_railway_timetable/features/timetable/data/datasource/tdx_tra_api_service.dart'
     as _i317;
+import 'package:flutter_railway_timetable/features/timetable/data/repository/thsr_timetable_repository_impl.dart'
+    as _i778;
 import 'package:flutter_railway_timetable/features/timetable/data/repository/timetable_repository_impl.dart'
     as _i692;
+import 'package:flutter_railway_timetable/features/timetable/domain/repository/thsr_timetable_repository.dart'
+    as _i1003;
 import 'package:flutter_railway_timetable/features/timetable/domain/repository/timetable_repository.dart'
     as _i275;
 import 'package:flutter_railway_timetable/features/timetable/domain/usecase/get_daily_timetable_use_case.dart'
@@ -37,6 +43,10 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
     gh.lazySingleton<_i361.Dio>(() => appModule.dio);
+    gh.lazySingleton<_i628.TdxThsrApiService>(
+      () => appModule.tdxThsrApiService(gh<_i361.Dio>()),
+      instanceName: 'thsr',
+    );
     gh.lazySingleton<_i317.TdxTraApiService>(
       () => appModule.tdxTraApiService(gh<_i361.Dio>()),
     );
@@ -45,6 +55,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i275.TimetableRepository>(
       () => _i692.TimetableRepositoryImpl(gh<_i317.TdxTraApiService>()),
+    );
+    gh.lazySingleton<_i1003.ThsrTimetableRepository>(
+      () => _i778.ThsrTimetableRepositoryImpl(
+        gh<_i628.TdxThsrApiService>(instanceName: 'thsr'),
+      ),
     );
     gh.factory<_i520.GetDailyTimetableUseCase>(
       () => _i520.GetDailyTimetableUseCase(gh<_i275.TimetableRepository>()),

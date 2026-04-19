@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="臺鐵時刻表"
+        android:label="鐵路時刻表"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

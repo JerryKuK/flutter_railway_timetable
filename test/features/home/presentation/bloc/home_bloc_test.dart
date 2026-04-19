@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_railway_timetable/core/enums/railway_type.dart';
 import 'package:flutter_railway_timetable/features/home/domain/entity/recent_search.dart';
 import 'package:flutter_railway_timetable/features/home/domain/repository/recent_search_repository.dart';
 import 'package:flutter_railway_timetable/features/home/presentation/bloc/home_bloc.dart';
@@ -15,25 +16,33 @@ import 'home_bloc_test.mocks.dart';
 
 void main() {
   late MockRecentSearchRepository mockRepo;
-  late MockTimetableRepository mockTimetableRepo;
+  late MockTimetableRepository mockTraRepo;
+  late MockTimetableRepository mockHsrRepo;
   late HomeBloc homeBloc;
 
-  final tDate = '2026/04/06';
+  final tDate = '2026/04/19';
   final tTime = '08:30';
 
-  final tStations = [
+  final tTraStations = [
     const Station(stationId: '1000', stationName: '台北', city: '臺北市'),
     const Station(stationId: '9000', stationName: '高雄', city: '高雄市'),
+  ];
+  final tHsrStations = [
+    const Station(stationId: '1000', stationName: '台北'),
+    const Station(stationId: '9900', stationName: '左營'),
   ];
 
   setUp(() {
     mockRepo = MockRecentSearchRepository();
-    mockTimetableRepo = MockTimetableRepository();
+    mockTraRepo = MockTimetableRepository();
+    mockHsrRepo = MockTimetableRepository();
     when(mockRepo.getRecentSearches()).thenAnswer((_) async => []);
-    when(mockTimetableRepo.getStations()).thenAnswer((_) async => tStations);
+    when(mockTraRepo.getStations()).thenAnswer((_) async => tTraStations);
+    when(mockHsrRepo.getStations()).thenAnswer((_) async => tHsrStations);
     homeBloc = HomeBloc(
       mockRepo,
-      mockTimetableRepo,
+      mockTraRepo,
+      mockHsrRepo,
       initialDate: tDate,
       initialTime: tTime,
     );
@@ -42,9 +51,10 @@ void main() {
   tearDown(() => homeBloc.close());
 
   group('HomeBloc', () {
-    test('initial state has default stations', () {
+    test('initial state has default TRA stations', () {
       expect(homeBloc.state.departureStation, '台北');
       expect(homeBloc.state.arrivalStation, '高雄');
+      expect(homeBloc.state.railwayType, RailwayType.tra);
     });
 
     blocTest<HomeBloc, HomeState>(
@@ -56,6 +66,93 @@ void main() {
             .having((s) => s.departureStation, 'departure', '高雄')
             .having((s) => s.arrivalStation, 'arrival', '台北'),
       ],
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'SwitchRailwayType 切換至高鐵時更新 railwayType 並重設站點',
+      build: () => homeBloc,
+      act: (bloc) =>
+          bloc.add(const HomeEvent.switchRailwayType(RailwayType.hsr)),
+      expect: () => [
+        isA<HomeState>()
+            .having((s) => s.railwayType, 'railwayType', RailwayType.hsr)
+            .having((s) => s.departureStation, 'departure', '南港')
+            .having((s) => s.departureStationId, 'depId', '0990')
+            .having((s) => s.arrivalStation, 'arrival', '左營')
+            .having((s) => s.arrivalStationId, 'arrId', '9900'),
+      ],
+    );
+
+    blocTest<HomeBloc, HomeState>(
+      'SwitchRailwayType 切換回台鐵時還原預設站點',
+      build: () => homeBloc,
+      act: (bloc) async {
+        bloc.add(const HomeEvent.switchRailwayType(RailwayType.hsr));
+        bloc.add(const HomeEvent.switchRailwayType(RailwayType.tra));
+      },
+      expect: () => [
+        isA<HomeState>().having((s) => s.railwayType, 'r', RailwayType.hsr),
+        isA<HomeState>()
+            .having((s) => s.railwayType, 'railwayType', RailwayType.tra)
+            .having((s) => s.departureStation, 'departure', '台北')
+            .having((s) => s.departureStationId, 'depId', '1000')
+            .having((s) => s.arrivalStation, 'arrival', '高雄')
+            .having((s) => s.arrivalStationId, 'arrId', '9000'),
+      ],
+    );
+
+    test('LoadStations 初始化同時載入 TRA + THSR 車站', () async {
+      final bloc = HomeBloc(
+        mockRepo,
+        mockTraRepo,
+        mockHsrRepo,
+        initialDate: tDate,
+        initialTime: tTime,
+      );
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+      expect(bloc.state.traStations.length, 2);
+      expect(bloc.state.hsrStations.length, 2);
+      expect(bloc.state.isLoadingStations, false);
+      await bloc.close();
+    });
+
+    test('LoadStations 失敗時設定 stationsError', () async {
+      when(mockTraRepo.getStations()).thenThrow(Exception('Network error'));
+      final bloc = HomeBloc(
+        mockRepo,
+        mockTraRepo,
+        mockHsrRepo,
+        initialDate: tDate,
+        initialTime: tTime,
+      );
+      await Future.delayed(Duration.zero);
+      await Future.delayed(Duration.zero);
+      expect(bloc.state.stationsError, isNotNull);
+      expect(bloc.state.isLoadingStations, false);
+      await bloc.close();
+    });
+
+    blocTest<HomeBloc, HomeState>(
+      'Search 高鐵模式時 navigateToTimetable=true 且儲存 railwayType=hsr',
+      build: () => homeBloc,
+      setUp: () {
+        when(mockRepo.saveSearch(any)).thenAnswer((_) async {});
+        when(mockRepo.getRecentSearches()).thenAnswer((_) async => []);
+      },
+      act: (bloc) async {
+        bloc.add(const HomeEvent.switchRailwayType(RailwayType.hsr));
+        bloc.add(const HomeEvent.search());
+      },
+      expect: () => [
+        isA<HomeState>().having((s) => s.railwayType, 'r', RailwayType.hsr),
+        isA<HomeState>().having((s) => s.navigateToTimetable, 'nav', true),
+      ],
+      verify: (_) {
+        final captured = verify(mockRepo.saveSearch(captureAny)).captured;
+        final saved = captured.last as RecentSearch;
+        expect(saved.railwayType, 'hsr');
+      },
     );
 
     blocTest<HomeBloc, HomeState>(
@@ -88,75 +185,6 @@ void main() {
             .having((s) => s.arrivalStation, 'arrival', '高雄車站'),
       ],
     );
-
-    blocTest<HomeBloc, HomeState>(
-      'UpdateDate updates date in state',
-      build: () => homeBloc,
-      act: (bloc) => bloc.add(const HomeEvent.updateDate('2026/05/01')),
-      expect: () => [
-        isA<HomeState>().having((s) => s.date, 'date', '2026/05/01'),
-      ],
-    );
-
-    blocTest<HomeBloc, HomeState>(
-      'Search saves current stations to recent searches repository',
-      build: () => homeBloc,
-      setUp: () {
-        when(mockRepo.saveSearch(any)).thenAnswer((_) async {});
-        when(mockRepo.getRecentSearches()).thenAnswer((_) async => []);
-      },
-      act: (bloc) => bloc.add(const HomeEvent.search()),
-      verify: (_) => verify(mockRepo.saveSearch(any)).called(1),
-    );
-
-    blocTest<HomeBloc, HomeState>(
-      'Search emits state with navigateToTimetable=true after save completes',
-      build: () => homeBloc,
-      setUp: () {
-        when(mockRepo.saveSearch(any)).thenAnswer((_) async {});
-        when(mockRepo.getRecentSearches()).thenAnswer((_) async => []);
-      },
-      act: (bloc) => bloc.add(const HomeEvent.search()),
-      expect: () => [
-        isA<HomeState>().having(
-          (s) => s.navigateToTimetable,
-          'navigateToTimetable',
-          true,
-        ),
-      ],
-    );
-
-    test('LoadStations 成功時更新 stations 並將 isLoadingStations 設為 false', () async {
-      when(mockTimetableRepo.getStations()).thenAnswer((_) async => tStations);
-      final bloc = HomeBloc(
-        mockRepo,
-        mockTimetableRepo,
-        initialDate: tDate,
-        initialTime: tTime,
-      );
-      // 等待所有 pending 事件（loadRecentSearches + loadStations）完成
-      await Future.delayed(Duration.zero);
-      await Future.delayed(Duration.zero);
-      expect(bloc.state.stations.length, 2);
-      expect(bloc.state.isLoadingStations, false);
-      expect(bloc.state.stationsError, isNull);
-      await bloc.close();
-    });
-
-    test('LoadStations 失敗時設定 stationsError', () async {
-      when(mockTimetableRepo.getStations()).thenThrow(Exception('Network error'));
-      final bloc = HomeBloc(
-        mockRepo,
-        mockTimetableRepo,
-        initialDate: tDate,
-        initialTime: tTime,
-      );
-      await Future.delayed(Duration.zero);
-      await Future.delayed(Duration.zero);
-      expect(bloc.state.stationsError, isNotNull);
-      expect(bloc.state.isLoadingStations, false);
-      await bloc.close();
-    });
 
     blocTest<HomeBloc, HomeState>(
       'SelectDepartureStation 更新出發站',

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/railway_theme.dart';
 
 class TimetableEmptyStateWidget extends StatelessWidget {
   final VoidCallback onRetry;
+  final RailwayTheme theme;
 
-  const TimetableEmptyStateWidget({super.key, required this.onRetry});
+  const TimetableEmptyStateWidget({
+    super.key,
+    required this.onRetry,
+    required this.theme,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,18 +19,17 @@ class TimetableEmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Icon circle
             Container(
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: const Color(0x154A90D9),
+                color: theme.accentSoft,
                 borderRadius: BorderRadius.circular(50),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.train,
                 size: 44,
-                color: Color(0x404A90D9),
+                color: theme.accent.withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 16),
@@ -53,10 +58,10 @@ class TimetableEmptyStateWidget extends StatelessWidget {
                 height: 44,
                 padding: const EdgeInsets.symmetric(horizontal: 28),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0xFF4A90D9), Color(0xFF357ABD)],
+                    colors: theme.headerGradient,
                   ),
                   borderRadius: BorderRadius.circular(22),
                 ),

@@ -1,0 +1,23 @@
+context platform=ios device="iPhone 17 Pro" kind=simulator
+open "com.example.flutterRailwayTimetable" --relaunch
+wait "時刻表" 5000
+click "role=\"text\" label=\"台鐵\nRail\" || label=\"台鐵\nRail\""
+wait "台鐵時刻表" 5000
+wait "出發站" 3000
+click "role=\"button\" label=\"出發站 臺北\" || label=\"出發站 台北\""
+wait "選擇出發站" 3000
+click "role=\"statictext\" label=\"臺北市\" || label=\"臺北市\""
+wait "臺北" 3000
+click "role=\"statictext\" label=\"臺北\" || label=\"臺北\""
+wait "台鐵時刻表" 5000
+click "role=\"text\" label=\"高鐵\nHSR\" || label=\"高鐵\nHSR\""
+wait "高鐵時刻表" 5000
+wait "到達站 左營" 5000
+click "role=\"button\" label=\"到達站 左營\" || label=\"到達站 左營\""
+wait "選擇到達站" 3000
+swipe 201 700 201 500 400
+swipe 201 700 201 500 400
+wait 500
+click 201 751
+wait "到達站 左營" 5000
+close "com.example.flutterRailwayTimetable"

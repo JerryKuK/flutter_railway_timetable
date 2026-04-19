@@ -9,5 +9,6 @@ abstract class RecentSearch with _$RecentSearch {
     required String arrivalStation,
     required String departureStationId,
     required String arrivalStationId,
+    @Default('tra') String railwayType,
   }) = _RecentSearch;
 }

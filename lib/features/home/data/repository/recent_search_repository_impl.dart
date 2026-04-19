@@ -21,6 +21,7 @@ class SharedPreferencesRecentSearchRepository
         arrivalStation: map['arrivalStation'] as String,
         departureStationId: map['departureStationId'] as String,
         arrivalStationId: map['arrivalStationId'] as String,
+        railwayType: map['railwayType'] as String? ?? 'tra',
       );
     }).toList();
   }
@@ -45,6 +46,7 @@ class SharedPreferencesRecentSearchRepository
                 'arrivalStation': s.arrivalStation,
                 'departureStationId': s.departureStationId,
                 'arrivalStationId': s.arrivalStationId,
+                'railwayType': s.railwayType,
               }))
           .toList(),
     );

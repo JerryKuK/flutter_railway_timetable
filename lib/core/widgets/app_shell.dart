@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../cubit/railway_type_cubit.dart';
+import '../enums/railway_type.dart';
+import '../theme/railway_theme.dart';
 
 class AppShell extends StatelessWidget {
   final Widget child;
@@ -22,35 +26,43 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = _currentIndex(context);
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xEEFFFFFF),
-        selectedItemColor: const Color(0xFF4A90D9),
-        unselectedItemColor: const Color(0xFFAABBCC),
-        selectedLabelStyle: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ),
-        elevation: 10,
-        onTap: (index) => context.go(_tabs[index].path),
-        items: _tabs
-            .asMap()
-            .entries
-            .map(
-              (e) => BottomNavigationBarItem(
-                icon: Icon(e.value.icon),
-                activeIcon: Icon(e.value.activeIcon),
-                label: e.value.label,
+    return BlocProvider(
+      create: (_) => RailwayTypeCubit(),
+      child: BlocBuilder<RailwayTypeCubit, RailwayType>(
+        builder: (context, railwayType) {
+          final theme = RailwayTheme.of(railwayType);
+          return Scaffold(
+            body: child,
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: currentIndex,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: const Color(0xEEFFFFFF),
+              selectedItemColor: theme.accent,
+              unselectedItemColor: const Color(0xFFAABBCC),
+              selectedLabelStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
-            )
-            .toList(),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
+              elevation: 10,
+              onTap: (index) => context.go(_tabs[index].path),
+              items: _tabs
+                  .asMap()
+                  .entries
+                  .map(
+                    (e) => BottomNavigationBarItem(
+                      icon: Icon(e.value.icon),
+                      activeIcon: Icon(e.value.activeIcon),
+                      label: e.value.label,
+                    ),
+                  )
+                  .toList(),
+            ),
+          );
+        },
       ),
     );
   }

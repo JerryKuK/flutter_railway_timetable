@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeState {
 
- String get departureStation; String get departureStationId; String get arrivalStation; String get arrivalStationId; String get date; String get time; List<RecentSearch> get recentSearches; bool get navigateToTimetable; List<Station> get stations; bool get isLoadingStations; String? get stationsError;
+ RailwayType get railwayType; String get departureStation; String get departureStationId; String get arrivalStation; String get arrivalStationId; String get date; String get time; List<RecentSearch> get recentSearches; bool get navigateToTimetable; List<Station> get traStations; List<Station> get hsrStations; bool get isLoadingStations; String? get stationsError;
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $HomeStateCopyWith<HomeState> get copyWith => _$HomeStateCopyWithImpl<HomeState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.departureStation, departureStation) || other.departureStation == departureStation)&&(identical(other.departureStationId, departureStationId) || other.departureStationId == departureStationId)&&(identical(other.arrivalStation, arrivalStation) || other.arrivalStation == arrivalStation)&&(identical(other.arrivalStationId, arrivalStationId) || other.arrivalStationId == arrivalStationId)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.recentSearches, recentSearches)&&(identical(other.navigateToTimetable, navigateToTimetable) || other.navigateToTimetable == navigateToTimetable)&&const DeepCollectionEquality().equals(other.stations, stations)&&(identical(other.isLoadingStations, isLoadingStations) || other.isLoadingStations == isLoadingStations)&&(identical(other.stationsError, stationsError) || other.stationsError == stationsError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeState&&(identical(other.railwayType, railwayType) || other.railwayType == railwayType)&&(identical(other.departureStation, departureStation) || other.departureStation == departureStation)&&(identical(other.departureStationId, departureStationId) || other.departureStationId == departureStationId)&&(identical(other.arrivalStation, arrivalStation) || other.arrivalStation == arrivalStation)&&(identical(other.arrivalStationId, arrivalStationId) || other.arrivalStationId == arrivalStationId)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.recentSearches, recentSearches)&&(identical(other.navigateToTimetable, navigateToTimetable) || other.navigateToTimetable == navigateToTimetable)&&const DeepCollectionEquality().equals(other.traStations, traStations)&&const DeepCollectionEquality().equals(other.hsrStations, hsrStations)&&(identical(other.isLoadingStations, isLoadingStations) || other.isLoadingStations == isLoadingStations)&&(identical(other.stationsError, stationsError) || other.stationsError == stationsError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,departureStation,departureStationId,arrivalStation,arrivalStationId,date,time,const DeepCollectionEquality().hash(recentSearches),navigateToTimetable,const DeepCollectionEquality().hash(stations),isLoadingStations,stationsError);
+int get hashCode => Object.hash(runtimeType,railwayType,departureStation,departureStationId,arrivalStation,arrivalStationId,date,time,const DeepCollectionEquality().hash(recentSearches),navigateToTimetable,const DeepCollectionEquality().hash(traStations),const DeepCollectionEquality().hash(hsrStations),isLoadingStations,stationsError);
 
 @override
 String toString() {
-  return 'HomeState(departureStation: $departureStation, departureStationId: $departureStationId, arrivalStation: $arrivalStation, arrivalStationId: $arrivalStationId, date: $date, time: $time, recentSearches: $recentSearches, navigateToTimetable: $navigateToTimetable, stations: $stations, isLoadingStations: $isLoadingStations, stationsError: $stationsError)';
+  return 'HomeState(railwayType: $railwayType, departureStation: $departureStation, departureStationId: $departureStationId, arrivalStation: $arrivalStation, arrivalStationId: $arrivalStationId, date: $date, time: $time, recentSearches: $recentSearches, navigateToTimetable: $navigateToTimetable, traStations: $traStations, hsrStations: $hsrStations, isLoadingStations: $isLoadingStations, stationsError: $stationsError)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $HomeStateCopyWith<$Res>  {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) _then) = _$HomeStateCopyWithImpl;
 @useResult
 $Res call({
- String departureStation, String departureStationId, String arrivalStation, String arrivalStationId, String date, String time, List<RecentSearch> recentSearches, bool navigateToTimetable, List<Station> stations, bool isLoadingStations, String? stationsError
+ RailwayType railwayType, String departureStation, String departureStationId, String arrivalStation, String arrivalStationId, String date, String time, List<RecentSearch> recentSearches, bool navigateToTimetable, List<Station> traStations, List<Station> hsrStations, bool isLoadingStations, String? stationsError
 });
 
 
@@ -62,9 +62,10 @@ class _$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? departureStation = null,Object? departureStationId = null,Object? arrivalStation = null,Object? arrivalStationId = null,Object? date = null,Object? time = null,Object? recentSearches = null,Object? navigateToTimetable = null,Object? stations = null,Object? isLoadingStations = null,Object? stationsError = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? railwayType = null,Object? departureStation = null,Object? departureStationId = null,Object? arrivalStation = null,Object? arrivalStationId = null,Object? date = null,Object? time = null,Object? recentSearches = null,Object? navigateToTimetable = null,Object? traStations = null,Object? hsrStations = null,Object? isLoadingStations = null,Object? stationsError = freezed,}) {
   return _then(_self.copyWith(
-departureStation: null == departureStation ? _self.departureStation : departureStation // ignore: cast_nullable_to_non_nullable
+railwayType: null == railwayType ? _self.railwayType : railwayType // ignore: cast_nullable_to_non_nullable
+as RailwayType,departureStation: null == departureStation ? _self.departureStation : departureStation // ignore: cast_nullable_to_non_nullable
 as String,departureStationId: null == departureStationId ? _self.departureStationId : departureStationId // ignore: cast_nullable_to_non_nullable
 as String,arrivalStation: null == arrivalStation ? _self.arrivalStation : arrivalStation // ignore: cast_nullable_to_non_nullable
 as String,arrivalStationId: null == arrivalStationId ? _self.arrivalStationId : arrivalStationId // ignore: cast_nullable_to_non_nullable
@@ -72,7 +73,8 @@ as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,recentSearches: null == recentSearches ? _self.recentSearches : recentSearches // ignore: cast_nullable_to_non_nullable
 as List<RecentSearch>,navigateToTimetable: null == navigateToTimetable ? _self.navigateToTimetable : navigateToTimetable // ignore: cast_nullable_to_non_nullable
-as bool,stations: null == stations ? _self.stations : stations // ignore: cast_nullable_to_non_nullable
+as bool,traStations: null == traStations ? _self.traStations : traStations // ignore: cast_nullable_to_non_nullable
+as List<Station>,hsrStations: null == hsrStations ? _self.hsrStations : hsrStations // ignore: cast_nullable_to_non_nullable
 as List<Station>,isLoadingStations: null == isLoadingStations ? _self.isLoadingStations : isLoadingStations // ignore: cast_nullable_to_non_nullable
 as bool,stationsError: freezed == stationsError ? _self.stationsError : stationsError // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -160,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> stations,  bool isLoadingStations,  String? stationsError)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RailwayType railwayType,  String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> traStations,  List<Station> hsrStations,  bool isLoadingStations,  String? stationsError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.stations,_that.isLoadingStations,_that.stationsError);case _:
+return $default(_that.railwayType,_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.traStations,_that.hsrStations,_that.isLoadingStations,_that.stationsError);case _:
   return orElse();
 
 }
@@ -181,10 +183,10 @@ return $default(_that.departureStation,_that.departureStationId,_that.arrivalSta
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> stations,  bool isLoadingStations,  String? stationsError)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RailwayType railwayType,  String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> traStations,  List<Station> hsrStations,  bool isLoadingStations,  String? stationsError)  $default,) {final _that = this;
 switch (_that) {
 case _HomeState():
-return $default(_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.stations,_that.isLoadingStations,_that.stationsError);case _:
+return $default(_that.railwayType,_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.traStations,_that.hsrStations,_that.isLoadingStations,_that.stationsError);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +203,10 @@ return $default(_that.departureStation,_that.departureStationId,_that.arrivalSta
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> stations,  bool isLoadingStations,  String? stationsError)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RailwayType railwayType,  String departureStation,  String departureStationId,  String arrivalStation,  String arrivalStationId,  String date,  String time,  List<RecentSearch> recentSearches,  bool navigateToTimetable,  List<Station> traStations,  List<Station> hsrStations,  bool isLoadingStations,  String? stationsError)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeState() when $default != null:
-return $default(_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.stations,_that.isLoadingStations,_that.stationsError);case _:
+return $default(_that.railwayType,_that.departureStation,_that.departureStationId,_that.arrivalStation,_that.arrivalStationId,_that.date,_that.time,_that.recentSearches,_that.navigateToTimetable,_that.traStations,_that.hsrStations,_that.isLoadingStations,_that.stationsError);case _:
   return null;
 
 }
@@ -216,9 +218,10 @@ return $default(_that.departureStation,_that.departureStationId,_that.arrivalSta
 
 
 class _HomeState implements HomeState {
-  const _HomeState({this.departureStation = '台北', this.departureStationId = '1020', this.arrivalStation = '高雄', this.arrivalStationId = '3300', required this.date, required this.time, final  List<RecentSearch> recentSearches = const [], this.navigateToTimetable = false, final  List<Station> stations = const [], this.isLoadingStations = false, this.stationsError}): _recentSearches = recentSearches,_stations = stations;
+  const _HomeState({this.railwayType = RailwayType.tra, this.departureStation = '台北', this.departureStationId = '1020', this.arrivalStation = '高雄', this.arrivalStationId = '3300', required this.date, required this.time, final  List<RecentSearch> recentSearches = const [], this.navigateToTimetable = false, final  List<Station> traStations = const [], final  List<Station> hsrStations = const [], this.isLoadingStations = false, this.stationsError}): _recentSearches = recentSearches,_traStations = traStations,_hsrStations = hsrStations;
   
 
+@override@JsonKey() final  RailwayType railwayType;
 @override@JsonKey() final  String departureStation;
 @override@JsonKey() final  String departureStationId;
 @override@JsonKey() final  String arrivalStation;
@@ -233,11 +236,18 @@ class _HomeState implements HomeState {
 }
 
 @override@JsonKey() final  bool navigateToTimetable;
- final  List<Station> _stations;
-@override@JsonKey() List<Station> get stations {
-  if (_stations is EqualUnmodifiableListView) return _stations;
+ final  List<Station> _traStations;
+@override@JsonKey() List<Station> get traStations {
+  if (_traStations is EqualUnmodifiableListView) return _traStations;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_stations);
+  return EqualUnmodifiableListView(_traStations);
+}
+
+ final  List<Station> _hsrStations;
+@override@JsonKey() List<Station> get hsrStations {
+  if (_hsrStations is EqualUnmodifiableListView) return _hsrStations;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_hsrStations);
 }
 
 @override@JsonKey() final  bool isLoadingStations;
@@ -253,16 +263,16 @@ _$HomeStateCopyWith<_HomeState> get copyWith => __$HomeStateCopyWithImpl<_HomeSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.departureStation, departureStation) || other.departureStation == departureStation)&&(identical(other.departureStationId, departureStationId) || other.departureStationId == departureStationId)&&(identical(other.arrivalStation, arrivalStation) || other.arrivalStation == arrivalStation)&&(identical(other.arrivalStationId, arrivalStationId) || other.arrivalStationId == arrivalStationId)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other._recentSearches, _recentSearches)&&(identical(other.navigateToTimetable, navigateToTimetable) || other.navigateToTimetable == navigateToTimetable)&&const DeepCollectionEquality().equals(other._stations, _stations)&&(identical(other.isLoadingStations, isLoadingStations) || other.isLoadingStations == isLoadingStations)&&(identical(other.stationsError, stationsError) || other.stationsError == stationsError));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeState&&(identical(other.railwayType, railwayType) || other.railwayType == railwayType)&&(identical(other.departureStation, departureStation) || other.departureStation == departureStation)&&(identical(other.departureStationId, departureStationId) || other.departureStationId == departureStationId)&&(identical(other.arrivalStation, arrivalStation) || other.arrivalStation == arrivalStation)&&(identical(other.arrivalStationId, arrivalStationId) || other.arrivalStationId == arrivalStationId)&&(identical(other.date, date) || other.date == date)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other._recentSearches, _recentSearches)&&(identical(other.navigateToTimetable, navigateToTimetable) || other.navigateToTimetable == navigateToTimetable)&&const DeepCollectionEquality().equals(other._traStations, _traStations)&&const DeepCollectionEquality().equals(other._hsrStations, _hsrStations)&&(identical(other.isLoadingStations, isLoadingStations) || other.isLoadingStations == isLoadingStations)&&(identical(other.stationsError, stationsError) || other.stationsError == stationsError));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,departureStation,departureStationId,arrivalStation,arrivalStationId,date,time,const DeepCollectionEquality().hash(_recentSearches),navigateToTimetable,const DeepCollectionEquality().hash(_stations),isLoadingStations,stationsError);
+int get hashCode => Object.hash(runtimeType,railwayType,departureStation,departureStationId,arrivalStation,arrivalStationId,date,time,const DeepCollectionEquality().hash(_recentSearches),navigateToTimetable,const DeepCollectionEquality().hash(_traStations),const DeepCollectionEquality().hash(_hsrStations),isLoadingStations,stationsError);
 
 @override
 String toString() {
-  return 'HomeState(departureStation: $departureStation, departureStationId: $departureStationId, arrivalStation: $arrivalStation, arrivalStationId: $arrivalStationId, date: $date, time: $time, recentSearches: $recentSearches, navigateToTimetable: $navigateToTimetable, stations: $stations, isLoadingStations: $isLoadingStations, stationsError: $stationsError)';
+  return 'HomeState(railwayType: $railwayType, departureStation: $departureStation, departureStationId: $departureStationId, arrivalStation: $arrivalStation, arrivalStationId: $arrivalStationId, date: $date, time: $time, recentSearches: $recentSearches, navigateToTimetable: $navigateToTimetable, traStations: $traStations, hsrStations: $hsrStations, isLoadingStations: $isLoadingStations, stationsError: $stationsError)';
 }
 
 
@@ -273,7 +283,7 @@ abstract mixin class _$HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Re
   factory _$HomeStateCopyWith(_HomeState value, $Res Function(_HomeState) _then) = __$HomeStateCopyWithImpl;
 @override @useResult
 $Res call({
- String departureStation, String departureStationId, String arrivalStation, String arrivalStationId, String date, String time, List<RecentSearch> recentSearches, bool navigateToTimetable, List<Station> stations, bool isLoadingStations, String? stationsError
+ RailwayType railwayType, String departureStation, String departureStationId, String arrivalStation, String arrivalStationId, String date, String time, List<RecentSearch> recentSearches, bool navigateToTimetable, List<Station> traStations, List<Station> hsrStations, bool isLoadingStations, String? stationsError
 });
 
 
@@ -290,9 +300,10 @@ class __$HomeStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? departureStation = null,Object? departureStationId = null,Object? arrivalStation = null,Object? arrivalStationId = null,Object? date = null,Object? time = null,Object? recentSearches = null,Object? navigateToTimetable = null,Object? stations = null,Object? isLoadingStations = null,Object? stationsError = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? railwayType = null,Object? departureStation = null,Object? departureStationId = null,Object? arrivalStation = null,Object? arrivalStationId = null,Object? date = null,Object? time = null,Object? recentSearches = null,Object? navigateToTimetable = null,Object? traStations = null,Object? hsrStations = null,Object? isLoadingStations = null,Object? stationsError = freezed,}) {
   return _then(_HomeState(
-departureStation: null == departureStation ? _self.departureStation : departureStation // ignore: cast_nullable_to_non_nullable
+railwayType: null == railwayType ? _self.railwayType : railwayType // ignore: cast_nullable_to_non_nullable
+as RailwayType,departureStation: null == departureStation ? _self.departureStation : departureStation // ignore: cast_nullable_to_non_nullable
 as String,departureStationId: null == departureStationId ? _self.departureStationId : departureStationId // ignore: cast_nullable_to_non_nullable
 as String,arrivalStation: null == arrivalStation ? _self.arrivalStation : arrivalStation // ignore: cast_nullable_to_non_nullable
 as String,arrivalStationId: null == arrivalStationId ? _self.arrivalStationId : arrivalStationId // ignore: cast_nullable_to_non_nullable
@@ -300,7 +311,8 @@ as String,date: null == date ? _self.date : date // ignore: cast_nullable_to_non
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,recentSearches: null == recentSearches ? _self._recentSearches : recentSearches // ignore: cast_nullable_to_non_nullable
 as List<RecentSearch>,navigateToTimetable: null == navigateToTimetable ? _self.navigateToTimetable : navigateToTimetable // ignore: cast_nullable_to_non_nullable
-as bool,stations: null == stations ? _self._stations : stations // ignore: cast_nullable_to_non_nullable
+as bool,traStations: null == traStations ? _self._traStations : traStations // ignore: cast_nullable_to_non_nullable
+as List<Station>,hsrStations: null == hsrStations ? _self._hsrStations : hsrStations // ignore: cast_nullable_to_non_nullable
 as List<Station>,isLoadingStations: null == isLoadingStations ? _self.isLoadingStations : isLoadingStations // ignore: cast_nullable_to_non_nullable
 as bool,stationsError: freezed == stationsError ? _self.stationsError : stationsError // ignore: cast_nullable_to_non_nullable
 as String?,

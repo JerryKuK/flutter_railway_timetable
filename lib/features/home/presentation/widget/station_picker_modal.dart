@@ -8,6 +8,7 @@ class StationPickerModal extends StatefulWidget {
   final bool isLoading;
   final String? errorMessage;
   final VoidCallback? onRetry;
+  final bool showCityFilter;
 
   const StationPickerModal({
     super.key,
@@ -17,6 +18,7 @@ class StationPickerModal extends StatefulWidget {
     this.isLoading = false,
     this.errorMessage,
     this.onRetry,
+    this.showCityFilter = true,
   });
 
   @override
@@ -93,7 +95,7 @@ class _StationPickerModalState extends State<StationPickerModal> {
           _buildHandle(),
           _buildHeader(context),
           _buildSearchBox(),
-          if (_cities.length > 1) _buildCityTabs(),
+          if (widget.showCityFilter && _cities.length > 1) _buildCityTabs(),
           const SizedBox(height: 8),
           const Divider(height: 1, thickness: 1, color: Color(0xFFE8ECF0)),
           Expanded(child: _buildContent()),
@@ -354,6 +356,7 @@ Future<Station?> showStationPickerModal(
   bool isLoading = false,
   String? errorMessage,
   VoidCallback? onRetry,
+  bool showCityFilter = true,
 }) {
   return showModalBottomSheet<Station>(
     context: context,
@@ -371,6 +374,7 @@ Future<Station?> showStationPickerModal(
         isLoading: isLoading,
         errorMessage: errorMessage,
         onRetry: onRetry,
+        showCityFilter: showCityFilter,
       ),
     ),
   );

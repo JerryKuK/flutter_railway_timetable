@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../../core/enums/railway_type.dart';
 import '../../../../features/timetable/domain/entity/station.dart';
 import '../../domain/entity/recent_search.dart';
 
@@ -7,6 +8,7 @@ part 'home_state.freezed.dart';
 @freezed
 abstract class HomeState with _$HomeState {
   const factory HomeState({
+    @Default(RailwayType.tra) RailwayType railwayType,
     @Default('台北') String departureStation,
     @Default('1020') String departureStationId,
     @Default('高雄') String arrivalStation,
@@ -15,7 +17,8 @@ abstract class HomeState with _$HomeState {
     required String time,
     @Default([]) List<RecentSearch> recentSearches,
     @Default(false) bool navigateToTimetable,
-    @Default([]) List<Station> stations,
+    @Default([]) List<Station> traStations,
+    @Default([]) List<Station> hsrStations,
     @Default(false) bool isLoadingStations,
     String? stationsError,
   }) = _HomeState;

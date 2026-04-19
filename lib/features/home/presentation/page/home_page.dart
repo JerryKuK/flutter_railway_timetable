@@ -9,8 +9,13 @@ import '../widget/station_input_widget.dart';
 import '../widget/date_time_row_widget.dart';
 import '../widget/recent_search_list_widget.dart';
 import '../widget/station_picker_modal.dart';
+import '../widget/railway_type_segment_widget.dart';
+import '../../../../core/cubit/railway_type_cubit.dart';
 import '../../../../core/di/injection.dart';
-import '../../../timetable/domain/repository/timetable_repository.dart';
+import '../../../../core/enums/railway_type.dart';
+import '../../../../core/theme/railway_theme.dart';
+import '../../../../features/timetable/domain/repository/timetable_repository.dart';
+import '../../../../features/timetable/domain/repository/thsr_timetable_repository.dart';
 import '../../domain/repository/recent_search_repository.dart';
 
 class HomePage extends StatelessWidget {
@@ -18,12 +23,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final initialType = context.read<RailwayTypeCubit>().state;
     return BlocProvider(
       create: (_) => HomeBloc(
         getIt<RecentSearchRepository>(),
         getIt<TimetableRepository>(),
+        getIt<ThsrTimetableRepository>(),
         initialDate: DateFormat('yyyy/MM/dd').format(DateTime.now()),
         initialTime: DateFormat('HH:mm').format(DateTime.now()),
+        initialRailwayType: initialType,
       ),
       child: const _HomeView(),
     );
@@ -35,34 +43,48 @@ class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listenWhen: (prev, curr) => curr.navigateToTimetable && !prev.navigateToTimetable,
-      listener: (context, state) {
-        context.go(
-          '/timetable',
-          extra: {
-            'origin': state.departureStationId,
-            'destination': state.arrivalStationId,
-            'date': state.date.replaceAll('/', '-'),
-            'time': state.time,
-            'originName': state.departureStation,
-            'destinationName': state.arrivalStation,
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<HomeBloc, HomeState>(
+          listenWhen: (prev, curr) =>
+              curr.navigateToTimetable && !prev.navigateToTimetable,
+          listener: (context, state) {
+            context.go(
+              '/timetable',
+              extra: {
+                'origin': state.departureStationId,
+                'destination': state.arrivalStationId,
+                'date': state.date.replaceAll('/', '-'),
+                'time': state.time,
+                'originName': state.departureStation,
+                'destinationName': state.arrivalStation,
+                'railwayType': state.railwayType.name,
+              },
+            );
           },
-        );
-      },
-      builder: (context, state) {
+        ),
+        BlocListener<HomeBloc, HomeState>(
+          listenWhen: (prev, curr) => prev.railwayType != curr.railwayType,
+          listener: (context, state) {
+            context.read<RailwayTypeCubit>().switchTo(state.railwayType);
+          },
+        ),
+      ],
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
+        final theme = RailwayTheme.of(state.railwayType);
         return Scaffold(
-          backgroundColor: const Color(0xFFE8F4FD),
+          backgroundColor: const Color(0xFFEEF4FB),
           body: CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(child: _buildTopSection()),
+              SliverToBoxAdapter(child: _buildTopSection(context, state, theme)),
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
                 sliver: SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _buildStationCard(context, state),
+                      _buildStationCard(context, state, theme),
                       const SizedBox(height: 16),
                       DateTimeRowWidget(
                         date: state.date,
@@ -73,11 +95,16 @@ class _HomeView extends StatelessWidget {
                             context.read<HomeBloc>().add(HomeEvent.updateTime(t)),
                       ),
                       const SizedBox(height: 16),
-                      _buildSearchButton(context, state),
-                      if (state.recentSearches.isNotEmpty) ...[
+                      _buildSearchButton(context, state, theme),
+                      if (state.recentSearches
+                          .where((s) => s.railwayType == state.railwayType.name)
+                          .isNotEmpty) ...[
                         const SizedBox(height: 20),
                         RecentSearchListWidget(
-                          searches: state.recentSearches,
+                          searches: state.recentSearches
+                              .where((s) =>
+                                  s.railwayType == state.railwayType.name)
+                              .toList(),
                           onClearAll: () => context
                               .read<HomeBloc>()
                               .add(const HomeEvent.clearHistory()),
@@ -94,47 +121,61 @@ class _HomeView extends StatelessWidget {
           ),
         );
       },
+    ),
     );
   }
 
-  Widget _buildTopSection() {
+  Widget _buildTopSection(
+      BuildContext context, HomeState state, RailwayTheme theme) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF87CEEB), Color(0xFF4A90D9)],
+          colors: theme.headerGradient,
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(24, 52, 24, 24),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.fromLTRB(20, 52, 20, 24),
+      child: Column(
         children: [
-          Icon(Icons.train, color: Colors.white, size: 28),
-          SizedBox(width: 10),
-          Text(
-            '鐵路時刻表',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+          RailwayTypeSegmentWidget(
+            value: state.railwayType,
+            onChanged: (type) =>
+                context.read<HomeBloc>().add(HomeEvent.switchRailwayType(type)),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.train, color: Colors.white, size: 28),
+              const SizedBox(width: 10),
+              Text(
+                state.railwayType == RailwayType.hsr ? '高鐵時刻表' : '台鐵時刻表',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStationCard(BuildContext context, HomeState state) {
+  Widget _buildStationCard(
+      BuildContext context, HomeState state, RailwayTheme theme) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xEEFFFFFF),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x15000000),
-            blurRadius: 12,
-            offset: Offset(0, 4),
+            color: Color(0x10244878),
+            blurRadius: 24,
+            offset: Offset(0, 8),
           ),
         ],
       ),
@@ -152,7 +193,7 @@ class _HomeView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          _buildDividerRow(context),
+          _buildDividerRow(context, state, theme),
           const SizedBox(height: 4),
           StationInputWidget(
             label: '到達站',
@@ -175,15 +216,19 @@ class _HomeView extends StatelessWidget {
     required bool isDeparture,
   }) async {
     final bloc = context.read<HomeBloc>();
+    final isHsr = state.railwayType == RailwayType.hsr;
+    final stations = isHsr ? state.hsrStations : state.traStations;
+
     final selected = await showStationPickerModal(
       context,
       title: isDeparture ? '選擇出發站' : '選擇到達站',
-      stations: state.stations,
+      stations: stations,
       selectedStationId: isDeparture
           ? state.departureStationId
           : state.arrivalStationId,
       isLoading: state.isLoadingStations,
       errorMessage: state.stationsError,
+      showCityFilter: !isHsr,
       onRetry: () {
         Navigator.of(context).pop();
         bloc.add(const HomeEvent.loadStations());
@@ -199,7 +244,8 @@ class _HomeView extends StatelessWidget {
     }
   }
 
-  Widget _buildDividerRow(BuildContext context) {
+  Widget _buildDividerRow(
+      BuildContext context, HomeState state, RailwayTheme theme) {
     return Row(
       children: [
         Expanded(child: Container(height: 1, color: const Color(0xFFE0E8F0))),
@@ -208,11 +254,18 @@ class _HomeView extends StatelessWidget {
           onTap: () =>
               context.read<HomeBloc>().add(const HomeEvent.swapStations()),
           child: Container(
-            width: 36,
-            height: 36,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF4A90D9),
-              borderRadius: BorderRadius.circular(18),
+              color: theme.accent,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.accent.withValues(alpha: 0.4),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
             child: const Icon(Icons.swap_vert, color: Colors.white, size: 18),
           ),
@@ -223,23 +276,24 @@ class _HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchButton(BuildContext context, HomeState state) {
+  Widget _buildSearchButton(
+      BuildContext context, HomeState state, RailwayTheme theme) {
     return GestureDetector(
       onTap: () => _onSearchTap(context, state),
       child: Container(
-        height: 52,
+        height: 54,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF4A90D9), Color(0xFF357ABD)],
+            colors: [theme.headerGradient.first, theme.accent],
           ),
-          borderRadius: BorderRadius.circular(26),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(27),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x404A90D9),
-              blurRadius: 12,
-              offset: Offset(0, 4),
+              color: theme.accent.withValues(alpha: 0.38),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -254,6 +308,7 @@ class _HomeView extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 17,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 1,
               ),
             ),
           ],

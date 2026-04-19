@@ -55,10 +55,11 @@ extension HomeEventPatterns on HomeEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SwapStations value)?  swapStations,TResult Function( UpdateDate value)?  updateDate,TResult Function( UpdateTime value)?  updateTime,TResult Function( Search value)?  search,TResult Function( ClearHistory value)?  clearHistory,TResult Function( SelectRecentSearch value)?  selectRecentSearch,TResult Function( LoadRecentSearches value)?  loadRecentSearches,TResult Function( LoadStations value)?  loadStations,TResult Function( SelectDepartureStation value)?  selectDepartureStation,TResult Function( SelectArrivalStation value)?  selectArrivalStation,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SwitchRailwayType value)?  switchRailwayType,TResult Function( SwapStations value)?  swapStations,TResult Function( UpdateDate value)?  updateDate,TResult Function( UpdateTime value)?  updateTime,TResult Function( Search value)?  search,TResult Function( ClearHistory value)?  clearHistory,TResult Function( SelectRecentSearch value)?  selectRecentSearch,TResult Function( LoadRecentSearches value)?  loadRecentSearches,TResult Function( LoadStations value)?  loadStations,TResult Function( SelectDepartureStation value)?  selectDepartureStation,TResult Function( SelectArrivalStation value)?  selectArrivalStation,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case SwapStations() when swapStations != null:
+case SwitchRailwayType() when switchRailwayType != null:
+return switchRailwayType(_that);case SwapStations() when swapStations != null:
 return swapStations(_that);case UpdateDate() when updateDate != null:
 return updateDate(_that);case UpdateTime() when updateTime != null:
 return updateTime(_that);case Search() when search != null:
@@ -86,10 +87,11 @@ return selectArrivalStation(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SwapStations value)  swapStations,required TResult Function( UpdateDate value)  updateDate,required TResult Function( UpdateTime value)  updateTime,required TResult Function( Search value)  search,required TResult Function( ClearHistory value)  clearHistory,required TResult Function( SelectRecentSearch value)  selectRecentSearch,required TResult Function( LoadRecentSearches value)  loadRecentSearches,required TResult Function( LoadStations value)  loadStations,required TResult Function( SelectDepartureStation value)  selectDepartureStation,required TResult Function( SelectArrivalStation value)  selectArrivalStation,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SwitchRailwayType value)  switchRailwayType,required TResult Function( SwapStations value)  swapStations,required TResult Function( UpdateDate value)  updateDate,required TResult Function( UpdateTime value)  updateTime,required TResult Function( Search value)  search,required TResult Function( ClearHistory value)  clearHistory,required TResult Function( SelectRecentSearch value)  selectRecentSearch,required TResult Function( LoadRecentSearches value)  loadRecentSearches,required TResult Function( LoadStations value)  loadStations,required TResult Function( SelectDepartureStation value)  selectDepartureStation,required TResult Function( SelectArrivalStation value)  selectArrivalStation,}){
 final _that = this;
 switch (_that) {
-case SwapStations():
+case SwitchRailwayType():
+return switchRailwayType(_that);case SwapStations():
 return swapStations(_that);case UpdateDate():
 return updateDate(_that);case UpdateTime():
 return updateTime(_that);case Search():
@@ -116,10 +118,11 @@ return selectArrivalStation(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SwapStations value)?  swapStations,TResult? Function( UpdateDate value)?  updateDate,TResult? Function( UpdateTime value)?  updateTime,TResult? Function( Search value)?  search,TResult? Function( ClearHistory value)?  clearHistory,TResult? Function( SelectRecentSearch value)?  selectRecentSearch,TResult? Function( LoadRecentSearches value)?  loadRecentSearches,TResult? Function( LoadStations value)?  loadStations,TResult? Function( SelectDepartureStation value)?  selectDepartureStation,TResult? Function( SelectArrivalStation value)?  selectArrivalStation,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SwitchRailwayType value)?  switchRailwayType,TResult? Function( SwapStations value)?  swapStations,TResult? Function( UpdateDate value)?  updateDate,TResult? Function( UpdateTime value)?  updateTime,TResult? Function( Search value)?  search,TResult? Function( ClearHistory value)?  clearHistory,TResult? Function( SelectRecentSearch value)?  selectRecentSearch,TResult? Function( LoadRecentSearches value)?  loadRecentSearches,TResult? Function( LoadStations value)?  loadStations,TResult? Function( SelectDepartureStation value)?  selectDepartureStation,TResult? Function( SelectArrivalStation value)?  selectArrivalStation,}){
 final _that = this;
 switch (_that) {
-case SwapStations() when swapStations != null:
+case SwitchRailwayType() when switchRailwayType != null:
+return switchRailwayType(_that);case SwapStations() when swapStations != null:
 return swapStations(_that);case UpdateDate() when updateDate != null:
 return updateDate(_that);case UpdateTime() when updateTime != null:
 return updateTime(_that);case Search() when search != null:
@@ -146,9 +149,10 @@ return selectArrivalStation(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function()?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,TResult Function()?  loadStations,TResult Function( Station station)?  selectDepartureStation,TResult Function( Station station)?  selectArrivalStation,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RailwayType type)?  switchRailwayType,TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function()?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,TResult Function()?  loadStations,TResult Function( Station station)?  selectDepartureStation,TResult Function( Station station)?  selectArrivalStation,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case SwapStations() when swapStations != null:
+case SwitchRailwayType() when switchRailwayType != null:
+return switchRailwayType(_that.type);case SwapStations() when swapStations != null:
 return swapStations();case UpdateDate() when updateDate != null:
 return updateDate(_that.date);case UpdateTime() when updateTime != null:
 return updateTime(_that.time);case Search() when search != null:
@@ -176,9 +180,10 @@ return selectArrivalStation(_that.station);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function()  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,required TResult Function()  loadStations,required TResult Function( Station station)  selectDepartureStation,required TResult Function( Station station)  selectArrivalStation,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RailwayType type)  switchRailwayType,required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function()  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,required TResult Function()  loadStations,required TResult Function( Station station)  selectDepartureStation,required TResult Function( Station station)  selectArrivalStation,}) {final _that = this;
 switch (_that) {
-case SwapStations():
+case SwitchRailwayType():
+return switchRailwayType(_that.type);case SwapStations():
 return swapStations();case UpdateDate():
 return updateDate(_that.date);case UpdateTime():
 return updateTime(_that.time);case Search():
@@ -205,9 +210,10 @@ return selectArrivalStation(_that.station);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function()?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,TResult? Function()?  loadStations,TResult? Function( Station station)?  selectDepartureStation,TResult? Function( Station station)?  selectArrivalStation,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RailwayType type)?  switchRailwayType,TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function()?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,TResult? Function()?  loadStations,TResult? Function( Station station)?  selectDepartureStation,TResult? Function( Station station)?  selectArrivalStation,}) {final _that = this;
 switch (_that) {
-case SwapStations() when swapStations != null:
+case SwitchRailwayType() when switchRailwayType != null:
+return switchRailwayType(_that.type);case SwapStations() when swapStations != null:
 return swapStations();case UpdateDate() when updateDate != null:
 return updateDate(_that.date);case UpdateTime() when updateTime != null:
 return updateTime(_that.time);case Search() when search != null:
@@ -222,6 +228,72 @@ return selectArrivalStation(_that.station);case _:
 
 }
 }
+
+}
+
+/// @nodoc
+
+
+class SwitchRailwayType implements HomeEvent {
+  const SwitchRailwayType(this.type);
+  
+
+ final  RailwayType type;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SwitchRailwayTypeCopyWith<SwitchRailwayType> get copyWith => _$SwitchRailwayTypeCopyWithImpl<SwitchRailwayType>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SwitchRailwayType&&(identical(other.type, type) || other.type == type));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,type);
+
+@override
+String toString() {
+  return 'HomeEvent.switchRailwayType(type: $type)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SwitchRailwayTypeCopyWith<$Res> implements $HomeEventCopyWith<$Res> {
+  factory $SwitchRailwayTypeCopyWith(SwitchRailwayType value, $Res Function(SwitchRailwayType) _then) = _$SwitchRailwayTypeCopyWithImpl;
+@useResult
+$Res call({
+ RailwayType type
+});
+
+
+
+
+}
+/// @nodoc
+class _$SwitchRailwayTypeCopyWithImpl<$Res>
+    implements $SwitchRailwayTypeCopyWith<$Res> {
+  _$SwitchRailwayTypeCopyWithImpl(this._self, this._then);
+
+  final SwitchRailwayType _self;
+  final $Res Function(SwitchRailwayType) _then;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? type = null,}) {
+  return _then(SwitchRailwayType(
+null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as RailwayType,
+  ));
+}
+
 
 }
 

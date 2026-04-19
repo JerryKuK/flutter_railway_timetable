@@ -2,6 +2,9 @@
 .env
 lib/core/env/env.g.dart
 
+# Agent Device test artifacts
+.agent-device/
+
 # Miscellaneous
 *.class
 *.log

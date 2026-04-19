@@ -4,6 +4,9 @@ import '../bloc/profile_bloc.dart';
 import '../bloc/profile_state.dart';
 import '../widget/profile_stats_widget.dart';
 import '../widget/profile_menu_widget.dart';
+import '../../../../core/cubit/railway_type_cubit.dart';
+import '../../../../core/enums/railway_type.dart';
+import '../../../../core/theme/railway_theme.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -22,24 +25,27 @@ class _ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        final profile = state.profile;
-        return Scaffold(
-          backgroundColor: const Color(0xFFEFF6FF),
-          body: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Color(0xFF60A5FA), Color(0xFF93C5FD)],
-                    ),
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(24)),
-                  ),
+    return BlocBuilder<RailwayTypeCubit, RailwayType>(
+      builder: (context, railwayType) {
+        final railTheme = RailwayTheme.of(railwayType);
+        return BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            final profile = state.profile;
+            return Scaffold(
+              backgroundColor: const Color(0xFFEFF6FF),
+              body: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: railTheme.headerGradient,
+                        ),
+                        borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(24)),
+                      ),
                   padding: const EdgeInsets.fromLTRB(20, 56, 20, 24),
                   child: Column(
                     children: [
@@ -135,8 +141,10 @@ class _ProfileView extends StatelessWidget {
                   ]),
                 ),
               ),
-            ],
-          ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
