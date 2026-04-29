@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import '../database/app_database.dart';
 import '../env/env.dart';
 import '../network/dio_client.dart';
 import '../../features/timetable/data/datasource/tdx_tra_api_service.dart';
@@ -7,6 +8,9 @@ import '../../features/timetable/data/datasource/tdx_thsr_api_service.dart';
 
 @module
 abstract class AppModule {
+  @lazySingleton
+  AppDatabase get appDatabase => AppDatabase();
+
   @lazySingleton
   Dio get dio => DioClient.create(
         tdxClientId: Env.tdxClientId,

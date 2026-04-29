@@ -10,9 +10,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:flutter_railway_timetable/core/database/app_database.dart'
+    as _i974;
 import 'package:flutter_railway_timetable/core/di/app_module.dart' as _i580;
-import 'package:flutter_railway_timetable/features/home/data/repository/recent_search_repository_impl.dart'
-    as _i159;
+import 'package:flutter_railway_timetable/features/home/data/repository/drift_recent_search_repository.dart'
+    as _i117;
 import 'package:flutter_railway_timetable/features/home/domain/repository/recent_search_repository.dart'
     as _i433;
 import 'package:flutter_railway_timetable/features/timetable/data/datasource/tdx_thsr_api_service.dart'
@@ -42,16 +44,17 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
+    gh.lazySingleton<_i974.AppDatabase>(() => appModule.appDatabase);
     gh.lazySingleton<_i361.Dio>(() => appModule.dio);
     gh.lazySingleton<_i628.TdxThsrApiService>(
       () => appModule.tdxThsrApiService(gh<_i361.Dio>()),
       instanceName: 'thsr',
     );
+    gh.lazySingleton<_i433.RecentSearchRepository>(
+      () => _i117.DriftRecentSearchRepository(gh<_i974.AppDatabase>()),
+    );
     gh.lazySingleton<_i317.TdxTraApiService>(
       () => appModule.tdxTraApiService(gh<_i361.Dio>()),
-    );
-    gh.lazySingleton<_i433.RecentSearchRepository>(
-      () => _i159.SharedPreferencesRecentSearchRepository(),
     );
     gh.lazySingleton<_i275.TimetableRepository>(
       () => _i692.TimetableRepositoryImpl(gh<_i317.TdxTraApiService>()),

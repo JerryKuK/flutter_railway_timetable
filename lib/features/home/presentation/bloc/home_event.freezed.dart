@@ -149,7 +149,7 @@ return selectArrivalStation(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RailwayType type)?  switchRailwayType,TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function()?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,TResult Function()?  loadStations,TResult Function( Station station)?  selectDepartureStation,TResult Function( Station station)?  selectArrivalStation,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( RailwayType type)?  switchRailwayType,TResult Function()?  swapStations,TResult Function( String date)?  updateDate,TResult Function( String time)?  updateTime,TResult Function()?  search,TResult Function( String railwayType)?  clearHistory,TResult Function( RecentSearch search)?  selectRecentSearch,TResult Function()?  loadRecentSearches,TResult Function()?  loadStations,TResult Function( Station station)?  selectDepartureStation,TResult Function( Station station)?  selectArrivalStation,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case SwitchRailwayType() when switchRailwayType != null:
 return switchRailwayType(_that.type);case SwapStations() when swapStations != null:
@@ -157,7 +157,7 @@ return swapStations();case UpdateDate() when updateDate != null:
 return updateDate(_that.date);case UpdateTime() when updateTime != null:
 return updateTime(_that.time);case Search() when search != null:
 return search();case ClearHistory() when clearHistory != null:
-return clearHistory();case SelectRecentSearch() when selectRecentSearch != null:
+return clearHistory(_that.railwayType);case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that.search);case LoadRecentSearches() when loadRecentSearches != null:
 return loadRecentSearches();case LoadStations() when loadStations != null:
 return loadStations();case SelectDepartureStation() when selectDepartureStation != null:
@@ -180,7 +180,7 @@ return selectArrivalStation(_that.station);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RailwayType type)  switchRailwayType,required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function()  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,required TResult Function()  loadStations,required TResult Function( Station station)  selectDepartureStation,required TResult Function( Station station)  selectArrivalStation,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( RailwayType type)  switchRailwayType,required TResult Function()  swapStations,required TResult Function( String date)  updateDate,required TResult Function( String time)  updateTime,required TResult Function()  search,required TResult Function( String railwayType)  clearHistory,required TResult Function( RecentSearch search)  selectRecentSearch,required TResult Function()  loadRecentSearches,required TResult Function()  loadStations,required TResult Function( Station station)  selectDepartureStation,required TResult Function( Station station)  selectArrivalStation,}) {final _that = this;
 switch (_that) {
 case SwitchRailwayType():
 return switchRailwayType(_that.type);case SwapStations():
@@ -188,7 +188,7 @@ return swapStations();case UpdateDate():
 return updateDate(_that.date);case UpdateTime():
 return updateTime(_that.time);case Search():
 return search();case ClearHistory():
-return clearHistory();case SelectRecentSearch():
+return clearHistory(_that.railwayType);case SelectRecentSearch():
 return selectRecentSearch(_that.search);case LoadRecentSearches():
 return loadRecentSearches();case LoadStations():
 return loadStations();case SelectDepartureStation():
@@ -210,7 +210,7 @@ return selectArrivalStation(_that.station);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RailwayType type)?  switchRailwayType,TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function()?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,TResult? Function()?  loadStations,TResult? Function( Station station)?  selectDepartureStation,TResult? Function( Station station)?  selectArrivalStation,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( RailwayType type)?  switchRailwayType,TResult? Function()?  swapStations,TResult? Function( String date)?  updateDate,TResult? Function( String time)?  updateTime,TResult? Function()?  search,TResult? Function( String railwayType)?  clearHistory,TResult? Function( RecentSearch search)?  selectRecentSearch,TResult? Function()?  loadRecentSearches,TResult? Function()?  loadStations,TResult? Function( Station station)?  selectDepartureStation,TResult? Function( Station station)?  selectArrivalStation,}) {final _that = this;
 switch (_that) {
 case SwitchRailwayType() when switchRailwayType != null:
 return switchRailwayType(_that.type);case SwapStations() when swapStations != null:
@@ -218,7 +218,7 @@ return swapStations();case UpdateDate() when updateDate != null:
 return updateDate(_that.date);case UpdateTime() when updateTime != null:
 return updateTime(_that.time);case Search() when search != null:
 return search();case ClearHistory() when clearHistory != null:
-return clearHistory();case SelectRecentSearch() when selectRecentSearch != null:
+return clearHistory(_that.railwayType);case SelectRecentSearch() when selectRecentSearch != null:
 return selectRecentSearch(_that.search);case LoadRecentSearches() when loadRecentSearches != null:
 return loadRecentSearches();case LoadStations() when loadStations != null:
 return loadStations();case SelectDepartureStation() when selectDepartureStation != null:
@@ -497,33 +497,67 @@ String toString() {
 
 
 class ClearHistory implements HomeEvent {
-  const ClearHistory();
+  const ClearHistory({required this.railwayType});
   
 
+ final  String railwayType;
 
-
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ClearHistoryCopyWith<ClearHistory> get copyWith => _$ClearHistoryCopyWithImpl<ClearHistory>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClearHistory);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClearHistory&&(identical(other.railwayType, railwayType) || other.railwayType == railwayType));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,railwayType);
 
 @override
 String toString() {
-  return 'HomeEvent.clearHistory()';
+  return 'HomeEvent.clearHistory(railwayType: $railwayType)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class $ClearHistoryCopyWith<$Res> implements $HomeEventCopyWith<$Res> {
+  factory $ClearHistoryCopyWith(ClearHistory value, $Res Function(ClearHistory) _then) = _$ClearHistoryCopyWithImpl;
+@useResult
+$Res call({
+ String railwayType
+});
 
 
+
+
+}
+/// @nodoc
+class _$ClearHistoryCopyWithImpl<$Res>
+    implements $ClearHistoryCopyWith<$Res> {
+  _$ClearHistoryCopyWithImpl(this._self, this._then);
+
+  final ClearHistory _self;
+  final $Res Function(ClearHistory) _then;
+
+/// Create a copy of HomeEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? railwayType = null,}) {
+  return _then(ClearHistory(
+railwayType: null == railwayType ? _self.railwayType : railwayType // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
 
 /// @nodoc
 

@@ -60,9 +60,40 @@ class MockRecentSearchRepository extends _i1.Mock
           as _i3.Future<void>);
 
   @override
-  _i3.Future<void> clearAll() =>
+  _i3.Future<void> clearByRailwayType(String? railwayType) =>
       (super.noSuchMethod(
-            Invocation.method(#clearAll, []),
+            Invocation.method(#clearByRailwayType, [railwayType]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<Map<String, String>?> getLastStationSelection(
+    String? railwayType,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getLastStationSelection, [railwayType]),
+            returnValue: _i3.Future<Map<String, String>?>.value(),
+          )
+          as _i3.Future<Map<String, String>?>);
+
+  @override
+  _i3.Future<void> saveLastStationSelection({
+    required String? railwayType,
+    required String? departureStation,
+    required String? departureStationId,
+    required String? arrivalStation,
+    required String? arrivalStationId,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#saveLastStationSelection, [], {
+              #railwayType: railwayType,
+              #departureStation: departureStation,
+              #departureStationId: departureStationId,
+              #arrivalStation: arrivalStation,
+              #arrivalStationId: arrivalStationId,
+            }),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

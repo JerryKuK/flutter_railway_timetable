@@ -64,25 +64,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     add(const HomeEvent.loadStations());
   }
 
-  void _onSwitchRailwayType(
-      SwitchRailwayType event, Emitter<HomeState> emit) {
+  Future<void> _onSwitchRailwayType(
+      SwitchRailwayType event, Emitter<HomeState> emit) async {
+    _persistCurrentSelection();
+
     final isHsr = event.type == RailwayType.hsr;
     final defaultDep = isHsr ? _hsrDefaultDep : _traDefaultDep;
-    final defaultArr = isHsr ? _hsrDefaultArr : _traDefaultArr;
     final defaultDepId = isHsr ? _hsrDefaultDepId : _traDefaultDepId;
+    final defaultArr = isHsr ? _hsrDefaultArr : _traDefaultArr;
     final defaultArrId = isHsr ? _hsrDefaultArrId : _traDefaultArrId;
 
-    final stations = isHsr ? state.hsrStations : state.traStations;
-    String depStation = defaultDep;
-    String depId = defaultDepId;
-    String arrStation = defaultArr;
-    String arrId = defaultArrId;
+    final lastSelection =
+        await _recentSearchRepository.getLastStationSelection(event.type.name);
 
-    if (stations.isNotEmpty) {
-      final dep = _findStation(stations, defaultDep);
-      final arr = _findStation(stations, defaultArr);
-      if (dep != null) { depStation = dep.stationName; depId = dep.stationId; }
-      if (arr != null) { arrStation = arr.stationName; arrId = arr.stationId; }
+    String depStation, depId, arrStation, arrId;
+    if (lastSelection != null) {
+      depStation = lastSelection['departureStation']!;
+      depId = lastSelection['departureStationId']!;
+      arrStation = lastSelection['arrivalStation']!;
+      arrId = lastSelection['arrivalStationId']!;
+    } else {
+      depStation = defaultDep;
+      depId = defaultDepId;
+      arrStation = defaultArr;
+      arrId = defaultArrId;
+
+      final stations = isHsr ? state.hsrStations : state.traStations;
+      if (stations.isNotEmpty) {
+        final dep = _findStation(stations, defaultDep);
+        final arr = _findStation(stations, defaultArr);
+        if (dep != null) {
+          depStation = dep.stationName;
+          depId = dep.stationId;
+        }
+        if (arr != null) {
+          arrStation = arr.stationName;
+          arrId = arr.stationId;
+        }
+      }
     }
 
     emit(state.copyWith(
@@ -102,6 +121,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       arrivalStation: state.departureStation,
       arrivalStationId: state.departureStationId,
     ));
+    _persistCurrentSelection();
   }
 
   void _onUpdateDate(UpdateDate event, Emitter<HomeState> emit) {
@@ -129,8 +149,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ClearHistory event,
     Emitter<HomeState> emit,
   ) async {
-    await _recentSearchRepository.clearAll();
-    emit(state.copyWith(recentSearches: []));
+    await _recentSearchRepository.clearByRailwayType(event.railwayType);
+    final updated = await _recentSearchRepository.getRecentSearches();
+    emit(state.copyWith(recentSearches: updated));
   }
 
   void _onSelectRecentSearch(
@@ -143,6 +164,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       arrivalStation: event.search.arrivalStation,
       arrivalStationId: event.search.arrivalStationId,
     ));
+    _persistCurrentSelection();
   }
 
   Future<void> _onLoadRecentSearches(
@@ -150,7 +172,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final searches = await _recentSearchRepository.getRecentSearches();
-    emit(state.copyWith(recentSearches: searches));
+    final lastSelection = await _recentSearchRepository
+        .getLastStationSelection(state.railwayType.name);
+
+    if (lastSelection != null) {
+      emit(state.copyWith(
+        recentSearches: searches,
+        departureStation: lastSelection['departureStation']!,
+        departureStationId: lastSelection['departureStationId']!,
+        arrivalStation: lastSelection['arrivalStation']!,
+        arrivalStationId: lastSelection['arrivalStationId']!,
+      ));
+    } else {
+      emit(state.copyWith(recentSearches: searches));
+    }
   }
 
   Future<void> _onLoadStations(
@@ -166,7 +201,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final traStations = results[0];
       final hsrStations = results[1];
 
-      // 以站名反查 API 實際的 StationID，確保 picker 高亮正確站點
       final isHsr = state.railwayType == RailwayType.hsr;
       final list = isHsr ? hsrStations : traStations;
       final depStation = _findStation(list, state.departureStation);
@@ -194,10 +228,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (stations.isEmpty || name.isEmpty) return null;
     String n(String s) => s.replaceAll('臺', '台');
     final normalized = n(name);
-    final exact = stations.where((s) => n(s.stationName) == normalized).firstOrNull;
+    final exact =
+        stations.where((s) => n(s.stationName) == normalized).firstOrNull;
     if (exact != null) return exact;
     return stations
-        .where((s) => n(s.stationName).contains(normalized) || normalized.contains(n(s.stationName)))
+        .where((s) =>
+            n(s.stationName).contains(normalized) ||
+            normalized.contains(n(s.stationName)))
         .firstOrNull;
   }
 
@@ -209,6 +246,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       departureStation: event.station.stationName,
       departureStationId: event.station.stationId,
     ));
+    _persistCurrentSelection();
   }
 
   void _onSelectArrivalStation(
@@ -219,5 +257,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       arrivalStation: event.station.stationName,
       arrivalStationId: event.station.stationId,
     ));
+    _persistCurrentSelection();
+  }
+
+  void _persistCurrentSelection() {
+    _recentSearchRepository.saveLastStationSelection(
+      railwayType: state.railwayType.name,
+      departureStation: state.departureStation,
+      departureStationId: state.departureStationId,
+      arrivalStation: state.arrivalStation,
+      arrivalStationId: state.arrivalStationId,
+    // ignore: avoid_print
+    ).catchError((Object e) => print('saveLastStationSelection failed: $e'));
   }
 }

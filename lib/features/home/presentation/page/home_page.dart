@@ -107,7 +107,9 @@ class _HomeView extends StatelessWidget {
                               .toList(),
                           onClearAll: () => context
                               .read<HomeBloc>()
-                              .add(const HomeEvent.clearHistory()),
+                              .add(HomeEvent.clearHistory(
+                                railwayType: state.railwayType.name,
+                              )),
                           onSelect: (s) => context
                               .read<HomeBloc>()
                               .add(HomeEvent.selectRecentSearch(s)),
