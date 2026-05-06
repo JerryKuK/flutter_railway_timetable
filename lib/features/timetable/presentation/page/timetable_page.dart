@@ -13,7 +13,6 @@ import '../../../../core/theme/railway_theme.dart';
 import '../../domain/repository/timetable_repository.dart';
 import '../../domain/repository/thsr_timetable_repository.dart';
 import '../../domain/usecase/get_daily_timetable_use_case.dart';
-
 class TimetablePage extends StatelessWidget {
   final String origin;
   final String destination;

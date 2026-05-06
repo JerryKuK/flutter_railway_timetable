@@ -27,6 +27,9 @@ Flutter/flutter_export_environment.sh
 ServiceDefinitions.json
 Runner/GeneratedPluginRegistrant.*
 
+# Widget Extension secrets (never commit)
+RailwayWidget/Secrets.xcconfig
+
 # Exceptions to above rules.
 !default.mode1v3
 !default.mode2v3

@@ -89,6 +89,39 @@ AI 程式開發助理，負責根據規格撰寫 Flutter 程式碼、修正問�
 
 ---
 
+## Widget Extension 本地設定
+
+本專案包含 iOS 桌面小工具（`RailwayWidget` Widget Extension），需額外設定 TDX 憑證。
+
+### 步驟
+
+1. **建立憑證檔案**
+
+   在 `ios/RailwayWidget/` 目錄手動建立 `Secrets.xcconfig`（此檔案已加入 `.gitignore`，不會入版控）：
+
+   ```xcconfig
+   TDX_CLIENT_ID = your_client_id
+   TDX_CLIENT_SECRET = your_client_secret
+   ```
+
+2. **Xcode Build Settings 引用 xcconfig**
+
+   - 在 Xcode 開啟 `Runner.xcworkspace`
+   - 選擇 `RailwayWidget` target → **Build Settings** → **Configurations**
+   - 在 Debug / Release 兩個 configuration 的 `RailwayWidget` 行，點擊並選擇 `ios/RailwayWidget/Secrets.xcconfig`
+
+3. **確認 App Group**
+
+   - 確認主 App target（`Runner`）與 Widget target（`RailwayWidget`）都在 **Signing & Capabilities** 下啟用了 App Group：`group.com.jerry.railwaytimetable.widget`
+
+4. **建置並測試**
+
+   在 iOS 模擬器或實機上安裝 App，然後長按主畫面 → 新增小工具 → 搜尋「鐵路時刻表」。
+
+> `Secrets.xcconfig` 已加入 `.gitignore`，不會被 commit。
+
+---
+
 ## 專案結構
 
 ```

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileMenuWidget extends StatelessWidget {
   final List<ProfileMenuItem> items;
@@ -19,9 +20,11 @@ class ProfileMenuWidget extends StatelessWidget {
                 leading: Icon(e.value.icon, color: Colors.blueAccent),
                 title: Text(e.value.label),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${e.value.label}（功能開發中）')),
-                ),
+                onTap: e.value.route != null
+                    ? () => context.go(e.value.route!)
+                    : () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${e.value.label}（功能開發中）')),
+                        ),
               ),
               if (!isLast)
                 const Divider(height: 1, indent: 56),
@@ -36,8 +39,9 @@ class ProfileMenuWidget extends StatelessWidget {
 class ProfileMenuItem {
   final IconData icon;
   final String label;
+  final String? route;
 
-  const ProfileMenuItem({required this.icon, required this.label});
+  const ProfileMenuItem({required this.icon, required this.label, this.route});
 }
 
 const accountMenuItems = [

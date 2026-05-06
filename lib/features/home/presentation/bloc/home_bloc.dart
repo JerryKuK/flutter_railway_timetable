@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/railway_type.dart';
 import '../../../../features/timetable/domain/entity/station.dart';
@@ -14,7 +15,7 @@ const _hsrDefaultArr = '左營';
 const _hsrDefaultArrId = '9900';
 
 // TRA default stations
-const _traDefaultDep = '台北';
+const _traDefaultDep = '臺北';
 const _traDefaultDepId = '1000';
 const _traDefaultArr = '高雄';
 const _traDefaultArrId = '3300';
@@ -267,7 +268,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       departureStationId: state.departureStationId,
       arrivalStation: state.arrivalStation,
       arrivalStationId: state.arrivalStationId,
-    // ignore: avoid_print
-    ).catchError((Object e) => print('saveLastStationSelection failed: $e'));
+    ).catchError((Object e) {
+      if (kDebugMode) print('saveLastStationSelection failed: $e');
+    });
   }
 }

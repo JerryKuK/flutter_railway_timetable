@@ -1,5 +1,5 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '12.0'
+# home_widget requires iOS 14.0+; AppIntent requires iOS 16.0+
+platform :ios, '16.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -28,7 +28,7 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
@@ -36,8 +36,25 @@ target 'Runner' do
   end
 end
 
+target 'RailwayWidgetExtension' do
+  use_frameworks! :linkage => :static
+  pod 'GRDB.swift', '~> 6.0'
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+  end
+
+  # Re-inject Secrets.xcconfig into widget extension pod xcconfigs.
+  # CocoaPods replaces the base config with its own xcconfig, so we add
+  # an explicit #include so TDX_CLIENT_ID / TDX_CLIENT_SECRET are expanded.
+  secrets_include = '#include "../../../RailwayWidget/Secrets.xcconfig"'
+  %w[debug release profile].each do |config|
+    path = "#{installer.sandbox.root}/Target Support Files/Pods-RailwayWidgetExtension/Pods-RailwayWidgetExtension.#{config}.xcconfig"
+    next unless File.exist?(path)
+    content = File.read(path)
+    next if content.include?(secrets_include)
+    File.write(path, "#{secrets_include}\n#{content}")
   end
 end

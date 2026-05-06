@@ -71,7 +71,7 @@ class ThsrTimetableRepositoryImpl implements ThsrTimetableRepository {
     _cachedStations = dtos
         .map((dto) => Station(
               stationId: dto.stationId,
-              stationName: dto.stationName?.zhTw ?? dto.stationId,
+              stationName: (dto.stationName?.zhTw ?? dto.stationId).replaceAll('台', '臺'),
             ))
         .toList();
     return _cachedStations!;

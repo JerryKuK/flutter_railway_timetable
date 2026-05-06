@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'core/di/injection.dart';
 import 'core/router/app_router.dart';
+import 'features/widget_config/data/widget_data_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await WidgetDataService.init();
   runApp(const App());
 }
 

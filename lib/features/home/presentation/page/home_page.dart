@@ -17,6 +17,8 @@ import '../../../../core/theme/railway_theme.dart';
 import '../../../../features/timetable/domain/repository/timetable_repository.dart';
 import '../../../../features/timetable/domain/repository/thsr_timetable_repository.dart';
 import '../../domain/repository/recent_search_repository.dart';
+import '../../../widget_config/data/widget_data_service.dart';
+import '../../../widget_config/domain/usecase/update_widget_stations_use_case.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -49,6 +51,16 @@ class _HomeView extends StatelessWidget {
           listenWhen: (prev, curr) =>
               curr.navigateToTimetable && !prev.navigateToTimetable,
           listener: (context, state) {
+            final repo = WidgetDataService.stationRepository;
+            if (repo != null) {
+              UpdateWidgetStationsUseCase(repo).execute(
+                fromName: state.departureStation,
+                fromId: state.departureStationId,
+                toName: state.arrivalStation,
+                toId: state.arrivalStationId,
+                system: state.railwayType == RailwayType.hsr ? 'HSR' : 'TR',
+              ).then((_) => WidgetDataService.refreshWidget()).catchError((_) {});
+            }
             context.go(
               '/timetable',
               extra: {
