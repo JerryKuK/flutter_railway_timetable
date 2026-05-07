@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -94,6 +95,54 @@ void main() {
       expect: () => [
         const TimetableState.loading(),
         isA<TimetableError>(),
+      ],
+    );
+
+    blocTest<TimetableBloc, TimetableState>(
+      '連線逾時時 emit error 而非 empty',
+      build: () => timetableBloc,
+      setUp: () {
+        when(mockUseCase(
+          origin: anyNamed('origin'),
+          destination: anyNamed('destination'),
+          date: anyNamed('date'),
+        )).thenThrow(DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionTimeout,
+        ));
+      },
+      act: (bloc) => bloc.add(const TimetableEvent.load(
+        origin: 'TPE',
+        destination: 'KHH',
+        date: '2026-04-06',
+      )),
+      expect: () => [
+        const TimetableState.loading(),
+        const TimetableState.error('連線逾時，請檢查網路後重試'),
+      ],
+    );
+
+    blocTest<TimetableBloc, TimetableState>(
+      'receiveTimeout 時 emit error 而非 empty',
+      build: () => timetableBloc,
+      setUp: () {
+        when(mockUseCase(
+          origin: anyNamed('origin'),
+          destination: anyNamed('destination'),
+          date: anyNamed('date'),
+        )).thenThrow(DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.receiveTimeout,
+        ));
+      },
+      act: (bloc) => bloc.add(const TimetableEvent.load(
+        origin: 'TPE',
+        destination: 'KHH',
+        date: '2026-04-06',
+      )),
+      expect: () => [
+        const TimetableState.loading(),
+        const TimetableState.error('連線逾時，請檢查網路後重試'),
       ],
     );
   });

@@ -63,7 +63,7 @@ class TimetableBloc extends Bloc<TimetableEvent, TimetableState> {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
-        emit(const TimetableState.empty());
+        emit(const TimetableState.error('連線逾時，請檢查網路後重試'));
       } else {
         emit(TimetableState.error(e.message ?? '連線失敗'));
       }

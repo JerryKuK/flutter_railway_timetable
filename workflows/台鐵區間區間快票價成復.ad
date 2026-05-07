@@ -1,0 +1,66 @@
+context platform=ios device="iPhone 16 Pro" kind=simulator theme=unknown
+
+# 工作流程：驗證台鐵區間/區間快班次顯示正確的成復票價
+# 預期：區間/區間快班次卡片顯示「區間  #XXXX」完整車號，以及「NT$ XX」成人復興票票價
+# 路線：臺北 → 基隆（典型區間車密集路線）
+# 注意：日期設定為下個月 1 日（June 1, 2026），確保有班次資料
+
+open "com.example.flutterRailwayTimetable" --relaunch
+wait "時刻表" 5000
+
+# 切換到台鐵模式
+find "台鐵" click
+wait "台鐵時刻表" 3000
+
+# 選擇出發站：臺北（有區間車密集班次的路線）
+click "role=\"button\" label=\"出發站 臺北\" || role=\"button\" label=\"出發站 三坑\" || role=\"button\" label=\"出發站 南港\" || role=\"button\" label=\"出發站 高雄\" || role=\"button\" label=\"出發站 左營\""
+wait "選擇出發站" 3000
+fill "role=\"textfield\" label=\"搜尋站名...\" editable=true" "臺北"
+wait 1000
+click "label=\"臺北\""
+wait "出發站 臺北" 3000
+
+# 選擇到達站：基隆
+click "role=\"button\" label=\"到達站 基隆\" || role=\"button\" label=\"到達站 高雄\" || role=\"button\" label=\"到達站 左營\" || role=\"button\" label=\"到達站 臺北\" || role=\"button\" label=\"到達站 三坑\""
+wait "選擇到達站" 3000
+fill "role=\"textfield\" label=\"搜尋站名...\" editable=true" "基隆"
+wait 1000
+click "label=\"基隆\""
+wait "到達站 基隆" 3000
+
+# 設定查詢日期為下個月 1 號（確保未來日期有班次）
+click 108 424
+wait "Switch to input" 2000
+find "Next month" click
+wait 500
+click "role=\"button\" label=\"1, Monday, June 1, 2026\""
+find "OK" click
+wait "2026/06/01" 3000
+
+# 設定查詢時間為上午 06:00（確保早班有班次可查）
+click 295 424
+wait "Select time" 2000
+click "role=\"button\" label=\"AM\""
+click "role=\"button\" label=\"Switch to text input mode\""
+wait "Enter time" 2000
+fill "label=\"Hour\"" "06"
+fill "label=\"Minute\"" "00"
+click "role=\"button\" label=\"OK\""
+wait "06:00" 3000
+
+# 執行查詢
+find "查詢班次" click
+
+# 驗證班次列表出現（等待區間車班次）
+wait "區間" 30000
+
+# 驗證區間車顯示完整車號（格式「區間  #XXXX」）
+wait "區間  #" 5000
+
+# 驗證票價顯示（成人復興票）
+wait "NT$" 5000
+
+# 捲動確認更多班次也有完整資訊
+scroll "down" 2
+
+close "com.example.flutterRailwayTimetable"

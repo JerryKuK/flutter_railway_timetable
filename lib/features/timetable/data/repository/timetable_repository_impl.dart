@@ -48,6 +48,14 @@ class TimetableRepositoryImpl implements TimetableRepository {
     } on DioException catch (e) {
       // TDX OD 時刻表 API 在查無班次時回傳 404，視為空結果而非錯誤
       if (e.response?.statusCode == 404) return [];
+      if (e.response?.statusCode == 429) {
+        throw DioException(
+          requestOptions: e.requestOptions,
+          response: e.response,
+          type: DioExceptionType.badResponse,
+          message: 'API 請求頻率超限，請稍後再試',
+        );
+      }
       rethrow;
     }
   }
@@ -81,11 +89,10 @@ class TimetableRepositoryImpl implements TimetableRepository {
         typeName.contains('EMU') ||
         typeName.contains('TEMU')) return '自';
     if (typeName.contains('莒光')) return '莒';
-    if (typeName.contains('復興')) return '復';
-    if (typeName.contains('普快') ||
-        typeName.contains('普通') ||
+    if (typeName.contains('復興') ||
         typeName.contains('區間快') ||
-        typeName.contains('區間')) return '普';
+        typeName.contains('區間')) return '復';
+    if (typeName.contains('普快') || typeName.contains('普通')) return '普';
     return '';
   }
 

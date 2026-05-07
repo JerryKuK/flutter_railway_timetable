@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -170,6 +171,33 @@ void main() {
       expect(result.first.fare, 843);
     });
 
+    test('API 回傳 429：拋出含頻率超限訊息的例外', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        response: Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 429,
+        ),
+        type: DioExceptionType.badResponse,
+      ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
+
+      expect(
+        () => repository.getDailyTimetable(
+          origin: origin,
+          destination: destination,
+          date: date,
+        ),
+        throwsA(isA<DioException>().having(
+          (e) => e.message,
+          'message',
+          'API 請求頻率超限，請稍後再試',
+        )),
+      );
+    });
+
     test('ODFare API 失敗時，班次仍正常回傳，fare 為 0', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async => makeResponse(
@@ -191,7 +219,7 @@ void main() {
       expect(result.first.fare, 0);
     });
 
-    test('區間車與區間快 fare 同樣對應至 成普 票價', () async {
+    test('區間車 fare 對應至 成復 票價', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async => TdxTimetableResponseDto(
                 trainTimetables: [
@@ -227,7 +255,46 @@ void main() {
         date: date,
       );
 
-      expect(result.first.fare, 11);
+      expect(result.first.fare, 24);
+    });
+
+    test('區間快 fare 對應至 成復 票價', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenAnswer((_) async => TdxTimetableResponseDto(
+                trainTimetables: [
+                  TdxTrainTimetableDto(
+                    trainInfo: const TdxTrainInfoDto(
+                      trainNo: '4101',
+                      trainTypeName: MultilingualName(zhTw: '區間快', en: ''),
+                    ),
+                    stopTimes: [
+                      TdxStopTimeDto(
+                          stationId: origin,
+                          departureTime: '09:00',
+                          arrivalTime: '09:00'),
+                      TdxStopTimeDto(
+                          stationId: destination,
+                          departureTime: '09:20',
+                          arrivalTime: '09:20'),
+                    ],
+                  ),
+                ],
+              ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => makeODFareResponse([
+                const TdxFareDto(ticketType: '成自', price: 37),
+                const TdxFareDto(ticketType: '成莒', price: 28),
+                const TdxFareDto(ticketType: '成復', price: 24),
+                const TdxFareDto(ticketType: '成普', price: 11),
+              ]));
+
+      final result = await repository.getDailyTimetable(
+        origin: origin,
+        destination: destination,
+        date: date,
+      );
+
+      expect(result.first.fare, 24);
     });
 
     test('travelTime 由出發與到達時間計算', () async {

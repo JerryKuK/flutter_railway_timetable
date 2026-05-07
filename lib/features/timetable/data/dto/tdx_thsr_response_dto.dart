@@ -36,20 +36,37 @@ class TdxThsrMultilingualName {
 
 // ── THSR DailyTimetable OD v2 DTO ─────────────────────────────────────────
 
+// TDX v2 THSR DailyTimetable OD API nests TrainNo and TrainTypeName inside
+// a DailyTrainInfo object; OriginStopTime/DestinationStopTime are top-level.
 @JsonSerializable()
-class TdxThsrDailyTrainDto {
+class TdxThsrDailyTrainInfoDto {
   @JsonKey(name: 'TrainNo')
   final String trainNo;
   @JsonKey(name: 'TrainTypeName')
   final TdxThsrMultilingualName? trainTypeName;
+
+  const TdxThsrDailyTrainInfoDto({
+    this.trainNo = '',
+    this.trainTypeName,
+  });
+
+  factory TdxThsrDailyTrainInfoDto.fromJson(Map<String, dynamic> json) =>
+      _$TdxThsrDailyTrainInfoDtoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TdxThsrDailyTrainInfoDtoToJson(this);
+}
+
+@JsonSerializable()
+class TdxThsrDailyTrainDto {
+  @JsonKey(name: 'DailyTrainInfo')
+  final TdxThsrDailyTrainInfoDto? dailyTrainInfo;
   @JsonKey(name: 'OriginStopTime')
   final TdxThsrStopTimeDto? originStopTime;
   @JsonKey(name: 'DestinationStopTime')
   final TdxThsrStopTimeDto? destinationStopTime;
 
   const TdxThsrDailyTrainDto({
-    this.trainNo = '',
-    this.trainTypeName,
+    this.dailyTrainInfo,
     this.originStopTime,
     this.destinationStopTime,
   });

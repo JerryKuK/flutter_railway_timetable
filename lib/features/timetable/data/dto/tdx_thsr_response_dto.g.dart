@@ -34,15 +34,33 @@ Map<String, dynamic> _$TdxThsrMultilingualNameToJson(
   TdxThsrMultilingualName instance,
 ) => <String, dynamic>{'Zh_tw': instance.zhTw, 'En': instance.en};
 
-TdxThsrDailyTrainDto _$TdxThsrDailyTrainDtoFromJson(
+TdxThsrDailyTrainInfoDto _$TdxThsrDailyTrainInfoDtoFromJson(
   Map<String, dynamic> json,
-) => TdxThsrDailyTrainDto(
+) => TdxThsrDailyTrainInfoDto(
   trainNo: json['TrainNo'] as String? ?? '',
   trainTypeName:
       json['TrainTypeName'] == null
           ? null
           : TdxThsrMultilingualName.fromJson(
             json['TrainTypeName'] as Map<String, dynamic>,
+          ),
+);
+
+Map<String, dynamic> _$TdxThsrDailyTrainInfoDtoToJson(
+  TdxThsrDailyTrainInfoDto instance,
+) => <String, dynamic>{
+  'TrainNo': instance.trainNo,
+  'TrainTypeName': instance.trainTypeName,
+};
+
+TdxThsrDailyTrainDto _$TdxThsrDailyTrainDtoFromJson(
+  Map<String, dynamic> json,
+) => TdxThsrDailyTrainDto(
+  dailyTrainInfo:
+      json['DailyTrainInfo'] == null
+          ? null
+          : TdxThsrDailyTrainInfoDto.fromJson(
+            json['DailyTrainInfo'] as Map<String, dynamic>,
           ),
   originStopTime:
       json['OriginStopTime'] == null
@@ -61,8 +79,7 @@ TdxThsrDailyTrainDto _$TdxThsrDailyTrainDtoFromJson(
 Map<String, dynamic> _$TdxThsrDailyTrainDtoToJson(
   TdxThsrDailyTrainDto instance,
 ) => <String, dynamic>{
-  'TrainNo': instance.trainNo,
-  'TrainTypeName': instance.trainTypeName,
+  'DailyTrainInfo': instance.dailyTrainInfo,
   'OriginStopTime': instance.originStopTime,
   'DestinationStopTime': instance.destinationStopTime,
 };

@@ -1,0 +1,44 @@
+context platform=ios device="iPhone 16 Pro" kind=simulator theme=unknown
+
+# 工作流程：驗證高鐵時刻表每筆班次顯示完整車號
+# 預期：班次卡片顯示「高鐵  #XXXX」格式（如「高鐵  #0601」），而非「高鐵  #」空字串
+# 注意：日期設定為下個月 1 日（June 1, 2026），確保有班次資料
+
+open "com.example.flutterRailwayTimetable" --relaunch
+wait "時刻表" 5000
+
+# 切換到高鐵模式
+find "高鐵" click
+wait "高鐵時刻表" 3000
+
+# 設定查詢日期為下個月 1 號（確保未來日期有班次）
+click 108 424
+wait "Switch to input" 2000
+find "Next month" click
+wait 500
+click "role=\"button\" label=\"1, Monday, June 1, 2026\""
+find "OK" click
+wait "2026/06/01" 3000
+
+# 設定查詢時間為上午 06:00（確保早班有班次可查）
+click 295 424
+wait "Select time" 2000
+click "role=\"button\" label=\"AM\""
+click "role=\"button\" label=\"Switch to text input mode\""
+wait "Enter time" 2000
+fill "label=\"Hour\"" "06"
+fill "label=\"Minute\"" "00"
+click "role=\"button\" label=\"OK\""
+wait "06:00" 3000
+
+# 執行查詢
+find "查詢班次" click
+
+# 驗證班次卡片顯示完整車號（格式「高鐵  #XXXX」）
+# 若車號為空，此行將 timeout 失敗
+wait "高鐵  #" 30000
+
+# 捲動確認更多班次也有車號
+scroll "down" 2
+
+close "com.example.flutterRailwayTimetable"

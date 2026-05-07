@@ -60,7 +60,7 @@ void main() {
 
   group('HomeBloc', () {
     test('initial state has default TRA stations', () {
-      expect(homeBloc.state.departureStation, '台北');
+      expect(homeBloc.state.departureStation, '臺北');
       expect(homeBloc.state.arrivalStation, '高雄');
       expect(homeBloc.state.railwayType, RailwayType.tra);
     });

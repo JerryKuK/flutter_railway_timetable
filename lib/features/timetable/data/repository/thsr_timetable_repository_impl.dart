@@ -29,9 +29,9 @@ class ThsrTimetableRepositoryImpl implements ThsrTimetableRepository {
       return trains.map((t) {
         final dep = t.originStopTime?.departureTime ?? '';
         final arr = t.destinationStopTime?.arrivalTime ?? '';
-        final typeName = t.trainTypeName?.zhTw ?? '高鐵';
+        final typeName = t.dailyTrainInfo?.trainTypeName?.zhTw ?? '高鐵';
         return Train(
-          trainNo: t.trainNo,
+          trainNo: t.dailyTrainInfo?.trainNo ?? '',
           trainTypeName: typeName,
           departureTime: dep,
           arrivalTime: arr,
@@ -41,6 +41,14 @@ class ThsrTimetableRepositoryImpl implements ThsrTimetableRepository {
       }).toList();
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) return [];
+      if (e.response?.statusCode == 429) {
+        throw DioException(
+          requestOptions: e.requestOptions,
+          response: e.response,
+          type: DioExceptionType.badResponse,
+          message: 'API 請求頻率超限，請稍後再試',
+        );
+      }
       rethrow;
     }
   }

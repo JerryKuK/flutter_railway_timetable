@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -30,8 +31,10 @@ void main() {
     String arrTime = '08:36',
   }) =>
       TdxThsrDailyTrainDto(
-        trainNo: trainNo,
-        trainTypeName: TdxThsrMultilingualName(zhTw: typeName, en: ''),
+        dailyTrainInfo: TdxThsrDailyTrainInfoDto(
+          trainNo: trainNo,
+          trainTypeName: TdxThsrMultilingualName(zhTw: typeName, en: ''),
+        ),
         originStopTime: TdxThsrStopTimeDto(departureTime: depTime),
         destinationStopTime: TdxThsrStopTimeDto(arrivalTime: arrTime),
       );
@@ -72,6 +75,22 @@ void main() {
       expect(result.first.fare, 320);
     });
 
+    test('Train.trainNo 正確填入來自 DailyTrainInfo 的車號', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenAnswer((_) async => [makeTrain(trainNo: '0601')]);
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
+
+      final result = await repository.getDailyTimetable(
+        origin: origin,
+        destination: destination,
+        date: date,
+      );
+
+      expect(result.first.trainNo, '0601');
+      expect(result.first.trainTypeName, '高鐵');
+    });
+
     test('票價 API 失敗時降級：班次仍回傳，fare = 0', () async {
       when(mockApiService.getDailyTimetable(origin, destination, date))
           .thenAnswer((_) async => [makeTrain(trainNo: '103')]);
@@ -87,6 +106,33 @@ void main() {
       expect(result.length, 1);
       expect(result.first.trainNo, '103');
       expect(result.first.fare, 0);
+    });
+
+    test('API 回傳 429：拋出含頻率超限訊息的例外', () async {
+      when(mockApiService.getDailyTimetable(origin, destination, date))
+          .thenThrow(DioException(
+        requestOptions: RequestOptions(path: ''),
+        response: Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 429,
+        ),
+        type: DioExceptionType.badResponse,
+      ));
+      when(mockApiService.getODFare(origin, destination))
+          .thenAnswer((_) async => []);
+
+      expect(
+        () => repository.getDailyTimetable(
+          origin: origin,
+          destination: destination,
+          date: date,
+        ),
+        throwsA(isA<DioException>().having(
+          (e) => e.message,
+          'message',
+          'API 請求頻率超限，請稍後再試',
+        )),
+      );
     });
 
     test('API 回傳 404：回傳空列表不拋出例外', () async {
@@ -153,7 +199,7 @@ void main() {
       expect(result, isA<List<Station>>());
       expect(result.length, 2);
       expect(result.first.stationId, '1000');
-      expect(result.first.stationName, '台北');
+      expect(result.first.stationName, '臺北');
       verify(mockApiService.getStations()).called(1);
     });
 
