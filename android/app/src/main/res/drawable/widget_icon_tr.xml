@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#5FA6E0"
+                android:endColor="#2E72B8"
+                android:angle="225"
+                android:type="linear"/>
+        </shape>
+    </item>
+    <item
+        android:gravity="center"
+        android:drawable="@drawable/widget_train_icon"/>
+</layer-list>

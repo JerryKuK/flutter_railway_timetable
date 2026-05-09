@@ -122,6 +122,35 @@ AI 程式開發助理，負責根據規格撰寫 Flutter 程式碼、修正問�
 
 ---
 
+## Android Widget 本地設定
+
+本專案包含 Android 桌面小工具（台鐵 4×2），需在 `local.properties` 設定 TDX 憑證。
+
+### 步驟
+
+1. **開啟 `android/local.properties`**
+
+   加入以下兩行（此檔案已在 `android/.gitignore`，不會入版控）：
+
+   ```properties
+   TDX_CLIENT_ID=你的_Client_ID
+   TDX_CLIENT_SECRET=你的_Client_Secret
+   ```
+
+2. **建置並確認**
+
+   ```bash
+   cd android && ./gradlew assembleDebug
+   ```
+
+3. **安裝並測試**
+
+   安裝 App 後，長按 Android 主畫面 → 新增小工具 → 搜尋「鐵路時刻表」→ 選擇 4×2 尺寸。點擊「查詢」按鈕取得最新班次。
+
+> `local.properties` 已在 `android/.gitignore`，不會被 commit。
+
+---
+
 ## 專案結構
 
 ```
