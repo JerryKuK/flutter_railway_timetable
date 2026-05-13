@@ -32,10 +32,10 @@ void main() {
       expect(tr.length, 10);
     });
 
-    test('seeds 10 HSR stations on first call', () async {
+    test('seeds 12 HSR stations on first call (all of THSR network)', () async {
       await repo.initDefaultsIfNeeded();
       final hsr = await repo.getStations('HSR');
-      expect(hsr.length, 10);
+      expect(hsr.length, 12);
     });
 
     test('is idempotent — calling twice does not duplicate rows', () async {

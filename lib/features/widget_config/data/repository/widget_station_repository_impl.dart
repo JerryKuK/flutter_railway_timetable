@@ -10,10 +10,12 @@ const _trDefaults = [
   ('臺中', '3300'), ('臺南', '4220'), ('高雄', '4400'), ('花蓮', '7000'),
   ('臺東', '6000'), ('基隆', '0900'),
 ];
+// Full 12 HSR stations in north-to-south order. Must match
+// PickerStationDefaults.hsr in PickerStation.swift exactly.
 const _hsrDefaults = [
   ('南港', '0990'), ('臺北', '1000'), ('板橋', '1010'), ('桃園', '1020'),
-  ('新竹', '1030'), ('臺中', '1040'), ('嘉義', '1050'), ('臺南', '1060'),
-  ('左營', '1070'), ('苗栗', '1035'),
+  ('新竹', '1030'), ('苗栗', '1035'), ('臺中', '1040'), ('彰化', '1043'),
+  ('雲林', '1047'), ('嘉義', '1050'), ('臺南', '1060'), ('左營', '1070'),
 ];
 
 class WidgetStationRepositoryImpl implements IWidgetStationRepository {
@@ -93,7 +95,7 @@ class WidgetStationRepositoryImpl implements IWidgetStationRepository {
         }
       }
 
-      final trimmed = newOrder.take(UpdateWidgetStationsUseCase.maxStations).toList();
+      final trimmed = newOrder.take(UpdateWidgetStationsUseCase.maxStations(system)).toList();
 
       // Delete all rows for this system, then reinsert in new order
       await (_db.delete(_db.widgetStations)

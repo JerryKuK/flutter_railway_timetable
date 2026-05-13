@@ -4,17 +4,10 @@ enum RailwaySystem: String, Codable {
     case tr = "TR"
     case hsr = "HSR"
 
-    var displayName: String {
+    var prefix: String {
         switch self {
-        case .tr: return "台鐵"
-        case .hsr: return "高鐵"
-        }
-    }
-
-    var accentColor: String {
-        switch self {
-        case .tr: return "#2E72B8"
-        case .hsr: return "#C86820"
+        case .tr: return "tr"
+        case .hsr: return "hsr"
         }
     }
 }

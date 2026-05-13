@@ -1,7 +1,9 @@
 ## Purpose
 
 iOS 4×2 Medium 桌面小工具（kind `"RailwayWidget"`）的視覺渲染、AppIntent 互動、Timeline 自動更新與站台選擇器之需求集合。本 capability 僅涵蓋台鐵（TR）系統；高鐵專屬 widget 詳見 `ios-hsr-widget` capability。RailwayWidget Extension target 的 `IPHONEOS_DEPLOYMENT_TARGET` 為 `17.0`，故不含 iOS 16 fallback 路徑。
-## Requirements
+
+## MODIFIED Requirements
+
 ### Requirement: 4×2 Medium Widget 視覺渲染
 系統 SHALL 在 iOS 主畫面顯示 4×2 Medium 尺寸的「台鐵時刻表」widget（kind = `"RailwayWidget"`），外觀依照設計稿 `Home Screen Widgets.html` 像素精確還原；本 widget 僅渲染台鐵（TR）配色與內容，不再支援高鐵切換。
 
@@ -44,19 +46,6 @@ iOS 4×2 Medium 桌面小工具（kind `"RailwayWidget"`）的視覺渲染、App
 
 ---
 
-### Requirement: Timeline 自動更新策略
-Widget TimelineProvider SHALL 依固定策略自動請求 TDX API 並建立 timeline entries。
-
-#### Scenario: Timeline 到期自動重新整理
-- **WHEN** 目前 timeline 的最後一個 entry 到期（`atEnd` policy）
-- **THEN** 系統呼叫 `TimelineProvider.getTimeline`，打 TDX API 取得最新班次，建立未來 1 小時的 entries
-
-#### Scenario: Timeline entries 每小時一筆
-- **WHEN** `getTimeline` 成功取得班次
-- **THEN** 產生至少 1 筆 entry，日期為當下，下次更新時間設為 1 小時後
-
----
-
 ### Requirement: Widget 內嵌選站器（iOS 17+）
 台鐵 widget 上的出發站 / 到達站名稱 SHALL 為可點擊 `Button(intent:)`，點擊後在 Widget 同一 4×2 空間顯示選站 chip grid；intent 讀寫 `tr_widget_*` 系列 key；picker 僅顯示台鐵車站。（`RailwayWidgetExtension` 之 `IPHONEOS_DEPLOYMENT_TARGET` 為 `17.0`，故無 iOS 16 fallback 路徑；header 保留「（iOS 17+）」字眼作為跨 capability 的版本對齊提示。）
 
@@ -75,32 +64,4 @@ Widget TimelineProvider SHALL 依固定策略自動請求 TDX API 並建立 time
 #### Scenario: 關閉選站 grid 不變更路線
 - **WHEN** 使用者點擊選站 grid 右上角「×」按鈕
 - **THEN** 系統執行 `DismissPickerIntent`，清除 `tr_widget_picker_mode`，Widget 返回班次模式，路線維持不變
-
-### Requirement: Swift Domain Layer — TrainSchedule entity 與 Repository protocol
-Domain layer SHALL 定義 `TrainSchedule` value type 與 `TrainScheduleRepository` protocol，不依賴任何 Foundation 以外的框架。
-
-#### Scenario: TrainSchedule 包含必要欄位
-- **WHEN** Data layer 建立 `TrainSchedule` 實例
-- **THEN** 實例包含：`departureTime`（String HH:mm）、`arrivalTime`（String HH:mm）、`trainType`（String）、`trainNumber`（String）、`fare`（Int，NT$，0 若不可用）
-
-#### Scenario: GetNextTrainsUseCase 回傳最近兩班
-- **WHEN** 呼叫 `GetNextTrainsUseCase.execute(from:to:system:date:)`
-- **THEN** Repository 回傳的班次列表依出發時間排序，use case 回傳前 2 筆；若不足 2 筆則回傳全部
-
----
-
-### Requirement: Swift Data Layer — TDXAuthManager token 快取
-`TDXAuthManager` SHALL 使用 Swift actor 管理 TDX OAuth2 token 快取，邏輯與 Flutter `TdxAuthInterceptor` 對稱。
-
-#### Scenario: Token 不存在或過期時取得新 Token
-- **WHEN** 呼叫 `TDXAuthManager.validToken()` 且 token 不存在或已過期
-- **THEN** 向 `https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token` 發送 `client_credentials` POST，快取回傳的 access_token 及到期時間（expires_in - 60 秒）
-
-#### Scenario: Token 有效時直接回傳快取
-- **WHEN** 呼叫 `TDXAuthManager.validToken()` 且 token 尚未過期
-- **THEN** 直接回傳快取 token，不發出新 HTTP 請求
-
-#### Scenario: 憑證從 Bundle 讀取
-- **WHEN** `TDXAuthManager` 初始化
-- **THEN** `clientId` 與 `clientSecret` 從 `Bundle.main.infoDictionary["TDX_CLIENT_ID"]` 與 `["TDX_CLIENT_SECRET"]` 讀取；若 key 不存在則 `fatalError("Missing TDX credentials in Info.plist")`
 

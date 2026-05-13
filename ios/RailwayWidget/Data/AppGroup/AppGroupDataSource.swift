@@ -2,20 +2,26 @@ import Foundation
 
 struct AppGroupDataSource {
     static let appGroupID = "group.com.jerry.railwaytimetable.widget"
-    static let routeKey = "widget_route"
-    static let pickerModeKey = "widget_picker_mode"
-    static let schedulesKey = "widget_schedules"
-    static let lastErrorKey = "widget_last_error"
 
     private let suiteName: String
-    init(suiteName: String = Self.appGroupID) { self.suiteName = suiteName }
+    private let system: RailwaySystem
+
+    init(system: RailwaySystem, suiteName: String = Self.appGroupID) {
+        self.system = system
+        self.suiteName = suiteName
+    }
 
     private var defaults: UserDefaults? { UserDefaults(suiteName: suiteName) }
+
+    private var routeKey: String { "\(system.prefix)_widget_route" }
+    private var pickerModeKey: String { "\(system.prefix)_widget_picker_mode" }
+    private var schedulesKey: String { "\(system.prefix)_widget_schedules" }
+    private var lastErrorKey: String { "\(system.prefix)_widget_last_error" }
 
     // MARK: - Route
     func loadRoute() -> WidgetRoute? {
         guard
-            let json = defaults?.string(forKey: Self.routeKey),
+            let json = defaults?.string(forKey: routeKey),
             let data = json.data(using: .utf8)
         else { return nil }
         return try? JSONDecoder().decode(WidgetRoute.self, from: data)
@@ -23,26 +29,26 @@ struct AppGroupDataSource {
 
     func saveRoute(_ route: WidgetRoute) {
         guard let data = try? JSONEncoder().encode(route) else { return }
-        defaults?.set(String(data: data, encoding: .utf8), forKey: Self.routeKey)
+        defaults?.set(String(data: data, encoding: .utf8), forKey: routeKey)
     }
 
     // MARK: - Picker Mode
     func loadPickerMode() -> String {
-        defaults?.string(forKey: Self.pickerModeKey) ?? "none"
+        defaults?.string(forKey: pickerModeKey) ?? "none"
     }
 
     func savePickerMode(_ mode: String) {
-        defaults?.set(mode, forKey: Self.pickerModeKey)
+        defaults?.set(mode, forKey: pickerModeKey)
     }
 
     // MARK: - Last Error (nil = no error)
     func saveLastError(_ msg: String?) {
-        if let msg { defaults?.set(msg, forKey: Self.lastErrorKey) }
-        else { defaults?.removeObject(forKey: Self.lastErrorKey) }
+        if let msg { defaults?.set(msg, forKey: lastErrorKey) }
+        else { defaults?.removeObject(forKey: lastErrorKey) }
     }
 
     func loadLastError() -> String? {
-        defaults?.string(forKey: Self.lastErrorKey)
+        defaults?.string(forKey: lastErrorKey)
     }
 
     // MARK: - Schedules (written by RefreshTimetableIntent, read by timeline provider)
@@ -50,12 +56,12 @@ struct AppGroupDataSource {
         let entries = schedules.map {
             ["dep": $0.departureTime, "arr": $0.arrivalTime, "type": $0.trainType, "num": $0.trainNumber]
         }
-        defaults?.set(try? JSONSerialization.data(withJSONObject: entries), forKey: Self.schedulesKey)
+        defaults?.set(try? JSONSerialization.data(withJSONObject: entries), forKey: schedulesKey)
     }
 
     func loadSchedules() -> [TrainSchedule] {
         guard
-            let data = defaults?.data(forKey: Self.schedulesKey),
+            let data = defaults?.data(forKey: schedulesKey),
             let arr = try? JSONSerialization.jsonObject(with: data) as? [[String: String]]
         else { return [] }
         return arr.compactMap { d in

@@ -12,5 +12,6 @@ import SwiftUI
 struct RailwayWidgetBundle: WidgetBundle {
     var body: some Widget {
         RailwayWidget()
+        HSRMediumWidget()
     }
 }

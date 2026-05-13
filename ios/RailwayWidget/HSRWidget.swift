@@ -1,18 +1,18 @@
 import WidgetKit
 import SwiftUI
 
-struct RailwayTimelineProvider: TimelineProvider {
-    private let dataSource = AppGroupDataSource(system: .tr)
+struct HSRRailwayTimelineProvider: TimelineProvider {
+    private let dataSource = AppGroupDataSource(system: .hsr)
     private let widgetDb: WidgetStationDatabase? = WidgetStationDatabase.make()
 
-    func placeholder(in context: Context) -> RailwayWidgetEntry { .trPlaceholder }
+    func placeholder(in context: Context) -> RailwayWidgetEntry { .hsrPlaceholder }
 
     func getSnapshot(in context: Context, completion: @escaping (RailwayWidgetEntry) -> Void) {
-        completion(.trPlaceholder)
+        completion(.hsrPlaceholder)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<RailwayWidgetEntry>) -> Void) {
-        let route = dataSource.loadRoute() ?? RailwayWidgetEntry.trPlaceholderRoute
+        let route = dataSource.loadRoute() ?? RailwayWidgetEntry.hsrPlaceholderRoute
         let pickerMode = dataSource.loadPickerMode()
         let schedules = dataSource.loadSchedules()
         let lastError = dataSource.loadLastError()
@@ -20,9 +20,9 @@ struct RailwayTimelineProvider: TimelineProvider {
         let pickerStations: [PickerStation]
         if let db = widgetDb {
             let useCase = GetPickerStationsUseCase(repository: PickerStationRepositoryImpl(db: db))
-            pickerStations = useCase.execute(system: "TR")
+            pickerStations = useCase.execute(system: "HSR")
         } else {
-            pickerStations = PickerStationDefaults.stations(for: "TR")
+            pickerStations = PickerStationDefaults.stations(for: "HSR")
         }
 
         let entry = RailwayWidgetEntry(
@@ -35,22 +35,22 @@ struct RailwayTimelineProvider: TimelineProvider {
     }
 }
 
-struct RailwayWidget: Widget {
-    let kind: String = "RailwayWidget"
+struct HSRMediumWidget: Widget {
+    let kind: String = "HSRWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: RailwayTimelineProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: HSRRailwayTimelineProvider()) { entry in
             MediumWidgetView(entry: entry)
                 .containerBackground(.background, for: .widget)
         }
-        .configurationDisplayName("台鐵時刻表")
-        .description("顯示台鐵下班車資訊")
+        .configurationDisplayName("高鐵時刻表")
+        .description("顯示台灣高鐵下班車資訊")
         .supportedFamilies([.systemMedium])
     }
 }
 
 #Preview(as: .systemMedium) {
-    RailwayWidget()
+    HSRMediumWidget()
 } timeline: {
-    RailwayWidgetEntry.trPlaceholder
+    RailwayWidgetEntry.hsrPlaceholder
 }

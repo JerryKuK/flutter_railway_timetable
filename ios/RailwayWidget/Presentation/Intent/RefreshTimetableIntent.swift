@@ -2,12 +2,12 @@ import AppIntents
 import WidgetKit
 
 struct RefreshTimetableIntent: AppIntent {
-    static var title: LocalizedStringResource = "查詢時刻表"
-    static var description = IntentDescription("重新查詢最新列車班次")
+    static var title: LocalizedStringResource = "查詢時刻表（台鐵）"
+    static var description = IntentDescription("重新查詢最新台鐵列車班次")
 
     func perform() async throws -> some IntentResult {
-        let ds = AppGroupDataSource()
-        let route = ds.loadRoute() ?? RailwayWidgetEntry.placeholderRoute
+        let ds = AppGroupDataSource(system: .tr)
+        let route = ds.loadRoute() ?? RailwayWidgetEntry.trPlaceholderRoute
 
         guard let repo = TrainScheduleRepositoryImpl.make() else {
             ds.saveSchedules([])
@@ -23,19 +23,9 @@ struct RefreshTimetableIntent: AppIntent {
                 from: route.fromId, to: route.toId, system: route.system, date: date
             )
             ds.saveSchedules(schedules)
-            ds.saveLastError(nil)  // clear error on success
-        } catch let error as TDXAuthError {
-            ds.saveSchedules([])
-            ds.saveLastError("ERR_AUTH: \(error)")
-        } catch let error as TDXAPIError {
-            switch error {
-            case .httpError(let code): ds.saveLastError("ERR_HTTP_\(code)")
-            case .invalidURL:          ds.saveLastError("ERR_INVALID_URL")
-            }
-            ds.saveSchedules([])
+            ds.saveLastError(nil)
         } catch {
-            ds.saveSchedules([])
-            ds.saveLastError("ERR: \(error.localizedDescription)")
+            ds.recordFetchError(error)
         }
 
         WidgetCenter.shared.reloadTimelines(ofKind: "RailwayWidget")

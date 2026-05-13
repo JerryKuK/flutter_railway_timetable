@@ -9,18 +9,33 @@ struct RailwayWidgetEntry: TimelineEntry {
     let lastError: String?   // nil = no error
     let pickerStations: [PickerStation]  // ordered station list for the picker, sourced from SQLite
 
-    static let placeholderRoute = WidgetRoute(
+    static let trPlaceholderRoute = WidgetRoute(
         system: .tr, fromId: "1000", fromName: "臺北", toId: "4400", toName: "高雄"
     )
 
-    static var placeholder: RailwayWidgetEntry {
+    static let hsrPlaceholderRoute = WidgetRoute(
+        system: .hsr, fromId: "1000", fromName: "臺北", toId: "1070", toName: "左營"
+    )
+
+    static var trPlaceholder: RailwayWidgetEntry {
         RailwayWidgetEntry(
             date: Date(),
-            route: placeholderRoute,
+            route: trPlaceholderRoute,
             schedules: [],
             pickerMode: "none",
             lastError: nil,
             pickerStations: PickerStationDefaults.stations(for: "TR")
+        )
+    }
+
+    static var hsrPlaceholder: RailwayWidgetEntry {
+        RailwayWidgetEntry(
+            date: Date(),
+            route: hsrPlaceholderRoute,
+            schedules: [],
+            pickerMode: "none",
+            lastError: nil,
+            pickerStations: PickerStationDefaults.stations(for: "HSR")
         )
     }
 }

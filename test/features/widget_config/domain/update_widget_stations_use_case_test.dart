@@ -78,28 +78,25 @@ void main() {
       )).called(1);
     });
 
-    test('passes correct system to setFront for HSR', () async {
+    test('short-circuits for HSR — never calls setFront (HSR picker shows all 12 stations in fixed N→S order)', () async {
       const hsrSystem = 'HSR';
-      when(mockRepo.tableExists()).thenAnswer((_) async => true);
-      when(mockRepo.getStations(hsrSystem)).thenAnswer((_) async =>
-          List.generate(10, (i) => WidgetStation(name: '站$i', stationId: '$i', system: hsrSystem, sortOrder: i)));
-      when(mockRepo.setFront(
-        fromName: anyNamed('fromName'), fromId: anyNamed('fromId'),
-        toName: anyNamed('toName'), toId: anyNamed('toId'),
-        system: anyNamed('system'),
-      )).thenAnswer((_) async {});
 
       await useCase.execute(
-        fromName: '台北', fromId: '1000',
+        fromName: '臺北', fromId: '1000',
         toName: '左營', toId: '1070',
         system: hsrSystem,
       );
 
-      verify(mockRepo.setFront(
-        fromName: '台北', fromId: '1000',
-        toName: '左營', toId: '1070',
-        system: hsrSystem,
-      )).called(1);
+      // HSR early-returns at the top of execute() before any repository call,
+      // because HSR has all 12 stations seeded and picker order is geographic
+      // (not recency-based). setFront would be a no-op churn at best.
+      verifyNever(mockRepo.tableExists());
+      verifyNever(mockRepo.getStations(any));
+      verifyNever(mockRepo.setFront(
+        fromName: anyNamed('fromName'), fromId: anyNamed('fromId'),
+        toName: anyNamed('toName'), toId: anyNamed('toId'),
+        system: anyNamed('system'),
+      ));
     });
 
     test('swallows exceptions silently', () async {

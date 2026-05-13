@@ -54,25 +54,13 @@ struct TDXAPIClient {
     // MARK: - HSR
     // Flutter: GET /api/basic/v2/Rail/THSR/DailyTimetable/OD/{origin}/to/{destination}/{trainDate}?$format=JSON
     // Response: DIRECT ARRAY (no wrapper object) — List<TdxThsrDailyTrainDto>
-    // Fields: TrainNo, TrainTypeName.Zh_tw, OriginStopTime.DepartureTime, DestinationStopTime.ArrivalTime
+    // Note: TDX v2 THSR DailyTimetable OD API NESTS TrainNo & TrainTypeName inside a `DailyTrainInfo` object.
+    //       OriginStopTime / DestinationStopTime remain top-level.
     func fetchHSRSchedule(from: String, to: String, date: String, token: String) async throws -> [TrainSchedule] {
         let path = "/api/basic/v2/Rail/THSR/DailyTimetable/OD/\(from)/to/\(to)/\(date)"
         let data = try await get(path: path, token: token)
 
-        struct MultiName: Decodable { let Zh_tw: String? }
-        struct StopTime: Decodable {
-            let DepartureTime: String
-            let ArrivalTime: String
-        }
-        struct Item: Decodable {
-            let TrainNo: String
-            let TrainTypeName: MultiName?
-            let OriginStopTime: StopTime?
-            let DestinationStopTime: StopTime?
-        }
-
-        // HSR API returns a direct array (no wrapper)
-        let items = try JSONDecoder().decode([Item].self, from: data)
+        let items = try JSONDecoder().decode([HSRDailyTrain].self, from: data)
         return items.compactMap { item in
             guard let dep = item.OriginStopTime?.DepartureTime,
                   let arr = item.DestinationStopTime?.ArrivalTime,
@@ -81,11 +69,27 @@ struct TDXAPIClient {
             return TrainSchedule(
                 departureTime: String(dep.prefix(5)),
                 arrivalTime: String(arr.prefix(5)),
-                trainType: item.TrainTypeName?.Zh_tw ?? "標準",
-                trainNumber: "#\(item.TrainNo)",
+                trainType: item.DailyTrainInfo?.TrainTypeName?.Zh_tw ?? "標準",
+                trainNumber: "#\(item.DailyTrainInfo?.TrainNo ?? "")",
                 fare: 0
             )
         }
+    }
+
+    // HSR DailyTimetable OD response item (file-scoped so tests can reach it)
+    struct HSRMultiName: Decodable { let Zh_tw: String? }
+    struct HSRStopTime: Decodable {
+        let DepartureTime: String
+        let ArrivalTime: String
+    }
+    struct HSRTrainInfo: Decodable {
+        let TrainNo: String
+        let TrainTypeName: HSRMultiName?
+    }
+    struct HSRDailyTrain: Decodable {
+        let DailyTrainInfo: HSRTrainInfo?
+        let OriginStopTime: HSRStopTime?
+        let DestinationStopTime: HSRStopTime?
     }
 
     // MARK: - Shared HTTP (adds $format=JSON like Flutter does)

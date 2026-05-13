@@ -89,6 +89,7 @@
 		B8B0D74987F6ED68BF75C993 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		BBEE70D6359E9DA562A36A6A /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBF5DFA0F8FF88FDBC4DDE70 /* Pods-RailwayWidgetExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RailwayWidgetExtension.release.xcconfig"; path = "Target Support Files/Pods-RailwayWidgetExtension/Pods-RailwayWidgetExtension.release.xcconfig"; sourceTree = "<group>"; };
+		C407A3DE2FB45ABE00C9644F /* RailwayWidgetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RailwayWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4FA47D52FA4728D004A915F /* RailwayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RailwayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4FA47D62FA4728D004A915F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C4FA47D82FA4728D004A915F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -98,11 +99,28 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C407A3FD2FB45C2500C9644F /* Exceptions for "RailwayWidget" folder in "RailwayWidgetTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Data/AppGroup/AppGroupDataSource.swift,
+				Data/Auth/TDXAuthManager.swift,
+				Data/Network/TDXAPIClient.swift,
+				Data/Repository/TrainScheduleRepositoryImpl.swift,
+				Domain/Entity/PickerStation.swift,
+				Domain/Entity/TrainSchedule.swift,
+				Domain/Entity/WidgetRoute.swift,
+				Domain/Repository/IPickerStationRepository.swift,
+				Domain/Repository/TrainScheduleRepository.swift,
+				Domain/UseCase/GetNextTrainsUseCase.swift,
+				Domain/UseCase/GetPickerStationsUseCase.swift,
+				Presentation/Entry/RailwayWidgetEntry.swift,
+			);
+			target = C407A3DD2FB45ABE00C9644F /* RailwayWidgetTests */;
+		};
 		C4FA47E92FA4728E004A915F /* Exceptions for "RailwayWidget" folder in "RailwayWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				RailwayWidgetExtension.entitlements,
 				Secrets.xcconfig,
 			);
 			target = C4FA47D42FA4728D004A915F /* RailwayWidgetExtension */;
@@ -110,10 +128,22 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		C407A3DF2FB45ABE00C9644F /* RailwayWidgetTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = RailwayWidgetTests;
+			sourceTree = "<group>";
+		};
 		C4FA47DA2FA4728D004A915F /* RailwayWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				C4FA47E92FA4728E004A915F /* Exceptions for "RailwayWidget" folder in "RailwayWidgetExtension" target */,
+				C407A3FD2FB45C2500C9644F /* Exceptions for "RailwayWidget" folder in "RailwayWidgetTests" target */,
 			);
 			explicitFileTypes = {
 			};
@@ -138,6 +168,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5830991CFB20F841A2847F51 /* Pods_RunnerTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C407A3DB2FB45ABE00C9644F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +228,7 @@
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				C4FA47DA2FA4728D004A915F /* RailwayWidget */,
+				C407A3DF2FB45ABE00C9644F /* RailwayWidgetTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				EC79D450CFE456A5E40C67DB /* Pods */,
@@ -204,6 +242,7 @@
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
 				C4FA47D52FA4728D004A915F /* RailwayWidgetExtension.appex */,
+				C407A3DE2FB45ABE00C9644F /* RailwayWidgetTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -286,6 +325,26 @@
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C407A3DD2FB45ABE00C9644F /* RailwayWidgetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C407A3E52FB45ABE00C9644F /* Build configuration list for PBXNativeTarget "RailwayWidgetTests" */;
+			buildPhases = (
+				C407A3DA2FB45ABE00C9644F /* Sources */,
+				C407A3DB2FB45ABE00C9644F /* Frameworks */,
+				C407A3DC2FB45ABE00C9644F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C407A3DF2FB45ABE00C9644F /* RailwayWidgetTests */,
+			);
+			name = RailwayWidgetTests;
+			productName = RailwayWidgetTests;
+			productReference = C407A3DE2FB45ABE00C9644F /* RailwayWidgetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C4FA47D42FA4728D004A915F /* RailwayWidgetExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C4FA47EA2FA4728E004A915F /* Build configuration list for PBXNativeTarget "RailwayWidgetExtension" */;
@@ -326,6 +385,9 @@
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
 					};
+					C407A3DD2FB45ABE00C9644F = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
 					C4FA47D42FA4728D004A915F = {
 						CreatedOnToolsVersion = 26.4.1;
 					};
@@ -347,6 +409,7 @@
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
 				C4FA47D42FA4728D004A915F /* RailwayWidgetExtension */,
+				C407A3DD2FB45ABE00C9644F /* RailwayWidgetTests */,
 			);
 		};
 /* End PBXProject section */
@@ -367,6 +430,13 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C407A3DC2FB45ABE00C9644F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,6 +581,13 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C407A3DA2FB45ABE00C9644F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,6 +925,99 @@
 			};
 			name = Release;
 		};
+		C407A3E22FB45ABE00C9644F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.railwaytimetable.RailwayWidgetTests.RailwayWidgetTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C407A3E32FB45ABE00C9644F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.railwaytimetable.RailwayWidgetTests.RailwayWidgetTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C407A3E42FB45ABE00C9644F /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.railwaytimetable.RailwayWidgetTests.RailwayWidgetTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 		C4FA47E62FA4728E004A915F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 53E4517B9FADF5028646BA42 /* Pods-RailwayWidgetExtension.debug.xcconfig */;
@@ -1009,6 +1179,16 @@
 				97C147061CF9000F007C117D /* Debug */,
 				97C147071CF9000F007C117D /* Release */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C407A3E52FB45ABE00C9644F /* Build configuration list for PBXNativeTarget "RailwayWidgetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C407A3E22FB45ABE00C9644F /* Debug */,
+				C407A3E32FB45ABE00C9644F /* Release */,
+				C407A3E42FB45ABE00C9644F /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

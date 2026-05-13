@@ -7,17 +7,16 @@ struct RailwayPalette {
     let gradTop: Color
     let gradBottom: Color
     let accent: Color
-    let accentSoft: Color
     let name: String
 
     static func of(_ system: RailwaySystem) -> RailwayPalette {
         switch system {
         case .tr:
             return RailwayPalette(gradTop: Color(hex: "#5FA6E0"), gradBottom: Color(hex: "#2E72B8"),
-                                  accent: Color(hex: "#2E72B8"), accentSoft: Color(hex: "#E3EEF9"), name: "台鐵")
+                                  accent: Color(hex: "#2E72B8"), name: "台鐵")
         case .hsr:
             return RailwayPalette(gradTop: Color(hex: "#F2A85C"), gradBottom: Color(hex: "#C86820"),
-                                  accent: Color(hex: "#C86820"), accentSoft: Color(hex: "#FBEEDF"), name: "高鐵")
+                                  accent: Color(hex: "#C86820"), name: "高鐵")
         }
     }
 
@@ -26,7 +25,25 @@ struct RailwayPalette {
     }
 }
 
+// MARK: - Picker grid layout per system
+private struct PickerLayout {
+    let chipCount: Int
+    let columnCount: Int
+    let chipSpacing: CGFloat
+
+    static func of(_ system: RailwaySystem) -> PickerLayout {
+        switch system {
+        case .tr:  return PickerLayout(chipCount: 10, columnCount: 5, chipSpacing: 5)
+        case .hsr: return PickerLayout(chipCount: 12, columnCount: 6, chipSpacing: 4)
+        }
+    }
+}
+
 // MARK: - Main View
+// Renders both 台鐵 and 高鐵 4×2 widgets. Differences between systems are limited to
+// the AppIntent type each button fires (intents must be statically-typed per widget
+// kind so iOS can route them) and the picker grid sizing — both are dispatched on
+// `entry.route.system`.
 struct MediumWidgetView: View {
     let entry: RailwayWidgetEntry
 
@@ -34,11 +51,7 @@ struct MediumWidgetView: View {
         let pal = RailwayPalette.of(entry.route.system)
         Group {
             if entry.pickerMode != "none" {
-                if #available(iOS 17.0, *) {
-                    pickerViewiOS17(pal: pal)
-                } else {
-                    scheduleView(pal: pal)
-                }
+                pickerView(pal: pal)
             } else {
                 scheduleView(pal: pal)
             }
@@ -67,29 +80,11 @@ struct MediumWidgetView: View {
                     Text("·")
                         .font(.system(size: 11))
                         .foregroundColor(Color(.systemGray3))
-                    if #available(iOS 17.0, *) {
-                        Button(intent: ShowPickerIntent(mode: "from")) {
-                            Text(entry.route.fromName)
-                                .font(.system(size: 11))
-                                .foregroundStyle(pal.accent)
-                                .underline(true, color: pal.accent)
-                        }
-                        .buttonStyle(.plain)
-                        Text("→")
-                            .font(.system(size: 11))
-                            .foregroundColor(Color(.systemGray2))
-                        Button(intent: ShowPickerIntent(mode: "to")) {
-                            Text(entry.route.toName)
-                                .font(.system(size: 11))
-                                .foregroundStyle(pal.accent)
-                                .underline(true, color: pal.accent)
-                        }
-                        .buttonStyle(.plain)
-                    } else {
-                        Text("\(entry.route.fromName) → \(entry.route.toName)")
-                            .font(.system(size: 11))
-                            .foregroundColor(pal.accent)
-                    }
+                    showPickerButton(mode: "from", stationName: entry.route.fromName, pal: pal)
+                    Text("→")
+                        .font(.system(size: 11))
+                        .foregroundColor(Color(.systemGray2))
+                    showPickerButton(mode: "to", stationName: entry.route.toName, pal: pal)
                 }
                 .lineLimit(1)
 
@@ -100,19 +95,7 @@ struct MediumWidgetView: View {
                     Text(dateString)
                         .font(.system(size: 10))
                         .foregroundColor(Color(.systemGray3))
-                    if #available(iOS 17.0, *) {
-                        Button(intent: RefreshTimetableIntent()) {
-                            Label("查詢", systemImage: "magnifyingglass")
-                                .font(.system(size: 10.5, weight: .bold))
-                                .foregroundStyle(pal.accent)
-                                .padding(.horizontal, 9)
-                                .frame(height: 22)
-                                .background(pal.accent.opacity(0.1))
-                                .clipShape(Capsule())
-                                .overlay(Capsule().stroke(pal.accent.opacity(0.2), lineWidth: 1))
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    refreshButton(pal: pal)
                 }
                 .fixedSize()
             }
@@ -120,7 +103,6 @@ struct MediumWidgetView: View {
             .padding(.top, 12)
             .padding(.bottom, 8)
 
-            // Divider
             divider
 
             // Train rows
@@ -204,10 +186,10 @@ struct MediumWidgetView: View {
     }
 
     // MARK: - Picker View (inline station selection, same 4×2 size)
-    @available(iOS 17.0, *)
-    private func pickerViewiOS17(pal: RailwayPalette) -> some View {
+    private func pickerView(pal: RailwayPalette) -> some View {
         let isFrom = entry.pickerMode == "from"
-        let stations = Array(entry.pickerStations.prefix(10))
+        let layout = PickerLayout.of(entry.route.system)
+        let stations = Array(entry.pickerStations.prefix(layout.chipCount))
         let other = isFrom ? entry.route.toName : entry.route.fromName
 
         return VStack(spacing: 0) {
@@ -230,37 +212,21 @@ struct MediumWidgetView: View {
                         .foregroundColor(Color(.systemGray))
                 }
                 Spacer()
-                Button(intent: DismissPickerIntent()) {
-                    ZStack {
-                        Circle()
-                            .fill(Color(.systemGray5))
-                            .frame(width: 22, height: 22)
-                        Image(systemName: "xmark")
-                            .font(.system(size: 9, weight: .semibold))
-                            .foregroundColor(Color(.systemGray))
-                    }
-                }
-                .buttonStyle(.plain)
+                dismissPickerButton
             }
             .padding(.horizontal, 10)
             .padding(.top, 10)
             .padding(.bottom, 6)
 
-            // Chips grid
-            let columns = Array(repeating: GridItem(.flexible(), spacing: 5), count: 5)
+            // Chips grid (5×2 for TR, 6×2 for HSR)
+            let columns = Array(
+                repeating: GridItem(.flexible(), spacing: layout.chipSpacing),
+                count: layout.columnCount
+            )
             LazyVGrid(columns: columns, spacing: 5) {
                 ForEach(stations, id: \.name) { station in
                     let isSelected = (isFrom ? entry.route.fromName : entry.route.toName) == station.name
-                    Button(intent: SelectStationIntent(stationName: station.name, stationId: station.stationId)) {
-                        Text(station.name)
-                            .font(.system(size: 10.5, weight: isSelected ? .semibold : .regular))
-                            .foregroundStyle(isSelected ? Color.white : Color.primary)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 4)
-                            .background(isSelected ? pal.accent : Color(.systemGray6))
-                            .clipShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
+                    selectStationButton(station: station, isSelected: isSelected, pal: pal)
                 }
             }
             .padding(.horizontal, 10)
@@ -280,6 +246,79 @@ struct MediumWidgetView: View {
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
+        }
+    }
+
+    // MARK: - Intent-dispatch buttons
+    // AppIntent types must be statically known per widget kind (iOS routes by type),
+    // so we branch on `entry.route.system` here rather than passing intent factories.
+
+    @ViewBuilder
+    private func showPickerButton(mode: String, stationName: String, pal: RailwayPalette) -> some View {
+        let label = Text(stationName)
+            .font(.system(size: 11))
+            .foregroundStyle(pal.accent)
+            .underline(true, color: pal.accent)
+        switch entry.route.system {
+        case .tr:
+            Button(intent: ShowPickerIntent(mode: mode)) { label }.buttonStyle(.plain)
+        case .hsr:
+            Button(intent: HSRShowPickerIntent(mode: mode)) { label }.buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private func refreshButton(pal: RailwayPalette) -> some View {
+        let label = Label("查詢", systemImage: "magnifyingglass")
+            .font(.system(size: 10.5, weight: .bold))
+            .foregroundStyle(pal.accent)
+            .padding(.horizontal, 9)
+            .frame(height: 22)
+            .background(pal.accent.opacity(0.1))
+            .clipShape(Capsule())
+            .overlay(Capsule().stroke(pal.accent.opacity(0.2), lineWidth: 1))
+        switch entry.route.system {
+        case .tr:
+            Button(intent: RefreshTimetableIntent()) { label }.buttonStyle(.plain)
+        case .hsr:
+            Button(intent: HSRRefreshTimetableIntent()) { label }.buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private var dismissPickerButton: some View {
+        let label = ZStack {
+            Circle()
+                .fill(Color(.systemGray5))
+                .frame(width: 22, height: 22)
+            Image(systemName: "xmark")
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundColor(Color(.systemGray))
+        }
+        switch entry.route.system {
+        case .tr:
+            Button(intent: DismissPickerIntent()) { label }.buttonStyle(.plain)
+        case .hsr:
+            Button(intent: HSRDismissPickerIntent()) { label }.buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder
+    private func selectStationButton(station: PickerStation, isSelected: Bool, pal: RailwayPalette) -> some View {
+        let label = Text(station.name)
+            .font(.system(size: 10.5, weight: isSelected ? .semibold : .regular))
+            .foregroundStyle(isSelected ? Color.white : Color.primary)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 4)
+            .background(isSelected ? pal.accent : Color(.systemGray6))
+            .clipShape(Capsule())
+        switch entry.route.system {
+        case .tr:
+            Button(intent: SelectStationIntent(stationName: station.name, stationId: station.stationId)) { label }
+                .buttonStyle(.plain)
+        case .hsr:
+            Button(intent: HSRSelectStationIntent(stationName: station.name, stationId: station.stationId)) { label }
+                .buttonStyle(.plain)
         }
     }
 
