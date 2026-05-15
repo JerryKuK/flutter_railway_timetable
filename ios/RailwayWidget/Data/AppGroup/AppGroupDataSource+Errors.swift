@@ -15,7 +15,6 @@ extension AppGroupDataSource {
         } else {
             message = "ERR: \(error.localizedDescription)"
         }
-        saveSchedules([])
-        saveLastError(message)
+        saveRefreshError(message)
     }
 }

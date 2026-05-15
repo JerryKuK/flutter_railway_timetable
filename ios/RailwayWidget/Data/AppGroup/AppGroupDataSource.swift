@@ -17,6 +17,7 @@ struct AppGroupDataSource {
     private var pickerModeKey: String { "\(system.prefix)_widget_picker_mode" }
     private var schedulesKey: String { "\(system.prefix)_widget_schedules" }
     private var lastErrorKey: String { "\(system.prefix)_widget_last_error" }
+    private var lastUpdateKey: String { "\(system.prefix)_widget_last_update" }
 
     // MARK: - Route
     func loadRoute() -> WidgetRoute? {
@@ -69,5 +70,30 @@ struct AppGroupDataSource {
                   let type_ = d["type"], let num = d["num"] else { return nil }
             return TrainSchedule(departureTime: dep, arrivalTime: arr, trainType: type_, trainNumber: num, fare: 0)
         }
+    }
+
+    // MARK: - Last Update (nil = never refreshed)
+    // Independent from TimelineEntry.date so picker / failure paths don't mutate the displayed time.
+    func saveLastUpdate(_ time: String) {
+        defaults?.set(time, forKey: lastUpdateKey)
+    }
+
+    func loadLastUpdate() -> String? {
+        defaults?.string(forKey: lastUpdateKey)
+    }
+
+    // MARK: - Refresh result batches
+    // lastUpdate is written only on success; saveRefreshError omits it so the footer time
+    // only changes after a real fetch.
+    func saveRefreshResult(route: WidgetRoute, schedules: [TrainSchedule], lastUpdate: String) {
+        saveRoute(route)
+        saveSchedules(schedules)
+        saveLastUpdate(lastUpdate)
+        saveLastError(nil)
+    }
+
+    func saveRefreshError(_ message: String) {
+        saveSchedules([])
+        saveLastError(message)
     }
 }

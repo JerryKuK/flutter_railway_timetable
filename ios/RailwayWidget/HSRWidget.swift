@@ -16,6 +16,7 @@ struct HSRRailwayTimelineProvider: TimelineProvider {
         let pickerMode = dataSource.loadPickerMode()
         let schedules = dataSource.loadSchedules()
         let lastError = dataSource.loadLastError()
+        let lastUpdate = dataSource.loadLastUpdate()
 
         let pickerStations: [PickerStation]
         if let db = widgetDb {
@@ -28,7 +29,7 @@ struct HSRRailwayTimelineProvider: TimelineProvider {
         let entry = RailwayWidgetEntry(
             date: Date(), route: route, schedules: schedules,
             pickerMode: pickerMode, lastError: lastError,
-            pickerStations: pickerStations
+            pickerStations: pickerStations, lastUpdate: lastUpdate
         )
         let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))

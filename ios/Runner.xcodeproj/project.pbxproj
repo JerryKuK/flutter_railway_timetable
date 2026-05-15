@@ -106,6 +106,7 @@
 				Data/Auth/TDXAuthManager.swift,
 				Data/Network/TDXAPIClient.swift,
 				Data/Repository/TrainScheduleRepositoryImpl.swift,
+				Data/Util/TaipeiClock.swift,
 				Domain/Entity/PickerStation.swift,
 				Domain/Entity/TrainSchedule.swift,
 				Domain/Entity/WidgetRoute.swift,

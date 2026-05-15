@@ -10,20 +10,18 @@ struct RefreshTimetableIntent: AppIntent {
         let route = ds.loadRoute() ?? RailwayWidgetEntry.trPlaceholderRoute
 
         guard let repo = TrainScheduleRepositoryImpl.make() else {
-            ds.saveSchedules([])
-            ds.saveLastError("ERR_NO_CREDENTIALS")
+            ds.saveRefreshError("ERR_NO_CREDENTIALS")
             WidgetCenter.shared.reloadTimelines(ofKind: "RailwayWidget")
             return .result()
         }
 
         let useCase = GetNextTrainsUseCase(repository: repo)
-        let date = DateFormatter.yyyyMMdd.string(from: Date())
+        let date = TaipeiClock.todayDate()
         do {
             let schedules = try await useCase.execute(
                 from: route.fromId, to: route.toId, system: route.system, date: date
             )
-            ds.saveSchedules(schedules)
-            ds.saveLastError(nil)
+            ds.saveRefreshResult(route: route, schedules: schedules, lastUpdate: TaipeiClock.nowTime())
         } catch {
             ds.recordFetchError(error)
         }
@@ -33,13 +31,3 @@ struct RefreshTimetableIntent: AppIntent {
     }
 }
 
-extension DateFormatter {
-    static let yyyyMMdd: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.calendar = Calendar(identifier: .gregorian)
-        f.timeZone = TimeZone(identifier: "Asia/Taipei")
-        f.dateFormat = "yyyy-MM-dd"
-        return f
-    }()
-}

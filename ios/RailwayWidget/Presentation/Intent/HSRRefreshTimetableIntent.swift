@@ -10,20 +10,18 @@ struct HSRRefreshTimetableIntent: AppIntent {
         let route = ds.loadRoute() ?? RailwayWidgetEntry.hsrPlaceholderRoute
 
         guard let repo = TrainScheduleRepositoryImpl.make() else {
-            ds.saveSchedules([])
-            ds.saveLastError("ERR_NO_CREDENTIALS")
+            ds.saveRefreshError("ERR_NO_CREDENTIALS")
             WidgetCenter.shared.reloadTimelines(ofKind: "HSRWidget")
             return .result()
         }
 
         let useCase = GetNextTrainsUseCase(repository: repo)
-        let date = DateFormatter.yyyyMMdd.string(from: Date())
+        let date = TaipeiClock.todayDate()
         do {
             let schedules = try await useCase.execute(
                 from: route.fromId, to: route.toId, system: .hsr, date: date
             )
-            ds.saveSchedules(schedules)
-            ds.saveLastError(nil)
+            ds.saveRefreshResult(route: route, schedules: schedules, lastUpdate: TaipeiClock.nowTime())
         } catch {
             ds.recordFetchError(error)
         }

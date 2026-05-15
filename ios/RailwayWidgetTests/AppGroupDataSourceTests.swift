@@ -100,4 +100,72 @@ struct AppGroupDataSourceTests {
         #expect(trDS.loadSchedules().first?.trainNumber == "#171")
         #expect(hsrDS.loadSchedules().first?.trainNumber == "#617")
     }
+
+    // MARK: - lastUpdate persistence
+
+    @Test("saveLastUpdate / loadLastUpdate round-trips on TR")
+    func tr_saveLoadLastUpdate_roundTrip() throws {
+        let suite = freshSuite()
+        let ds = AppGroupDataSource(system: .tr, suiteName: suite)
+        ds.saveLastUpdate("08:42")
+        #expect(ds.loadLastUpdate() == "08:42")
+        let raw = UserDefaults(suiteName: suite)?.string(forKey: "tr_widget_last_update")
+        #expect(raw == "08:42", "Expected tr_widget_last_update to hold the written string")
+    }
+
+    @Test("loadLastUpdate returns nil when key never written")
+    func loadLastUpdate_defaultNil() throws {
+        let suite = freshSuite()
+        let trDS = AppGroupDataSource(system: .tr, suiteName: suite)
+        let hsrDS = AppGroupDataSource(system: .hsr, suiteName: suite)
+        #expect(trDS.loadLastUpdate() == nil)
+        #expect(hsrDS.loadLastUpdate() == nil)
+    }
+
+    @Test("TR and HSR lastUpdate are isolated")
+    func trAndHsrLastUpdate_isolated() throws {
+        let suite = freshSuite()
+        let trDS = AppGroupDataSource(system: .tr, suiteName: suite)
+        let hsrDS = AppGroupDataSource(system: .hsr, suiteName: suite)
+
+        trDS.saveLastUpdate("08:00")
+        hsrDS.saveLastUpdate("17:30")
+
+        #expect(trDS.loadLastUpdate() == "08:00")
+        #expect(hsrDS.loadLastUpdate() == "17:30")
+    }
+
+    // MARK: - saveRefreshResult / saveRefreshError batch invariants
+
+    @Test("saveRefreshResult writes route + schedules + lastUpdate and clears lastError")
+    func saveRefreshResult_writesAllFieldsAndClearsError() throws {
+        let suite = freshSuite()
+        let ds = AppGroupDataSource(system: .tr, suiteName: suite)
+
+        ds.saveLastError("OLD_ERROR")
+        let schedules = [TrainSchedule(departureTime: "08:00", arrivalTime: "12:00",
+                                       trainType: "自強", trainNumber: "#171", fare: 0)]
+        ds.saveRefreshResult(route: sampleTRRoute, schedules: schedules, lastUpdate: "09:15")
+
+        #expect(ds.loadRoute() == sampleTRRoute)
+        #expect(ds.loadSchedules().first?.trainNumber == "#171")
+        #expect(ds.loadLastUpdate() == "09:15")
+        #expect(ds.loadLastError() == nil, "lastError must be cleared after a successful refresh")
+    }
+
+    @Test("saveRefreshError preserves lastUpdate, clears schedules, writes error")
+    func saveRefreshError_preservesLastUpdate() throws {
+        let suite = freshSuite()
+        let ds = AppGroupDataSource(system: .tr, suiteName: suite)
+
+        let schedules = [TrainSchedule(departureTime: "08:00", arrivalTime: "12:00",
+                                       trainType: "自強", trainNumber: "#171", fare: 0)]
+        ds.saveRefreshResult(route: sampleTRRoute, schedules: schedules, lastUpdate: "08:00")
+        ds.saveRefreshError("ERR_TEST")
+
+        #expect(ds.loadLastUpdate() == "08:00", "lastUpdate must survive a failed refresh")
+        #expect(ds.loadSchedules().isEmpty, "schedules must be cleared on error")
+        #expect(ds.loadLastError() == "ERR_TEST")
+        #expect(ds.loadRoute() == sampleTRRoute, "route is unrelated to refresh outcome and must remain")
+    }
 }

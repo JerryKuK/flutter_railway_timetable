@@ -8,6 +8,7 @@ struct RailwayWidgetEntry: TimelineEntry {
     let pickerMode: String   // "none" | "from" | "to"
     let lastError: String?   // nil = no error
     let pickerStations: [PickerStation]  // ordered station list for the picker, sourced from SQLite
+    let lastUpdate: String?  // nil = never refreshed; otherwise "HH:mm" Asia/Taipei of the last successful API fetch
 
     static let trPlaceholderRoute = WidgetRoute(
         system: .tr, fromId: "1000", fromName: "臺北", toId: "4400", toName: "高雄"
@@ -24,7 +25,8 @@ struct RailwayWidgetEntry: TimelineEntry {
             schedules: [],
             pickerMode: "none",
             lastError: nil,
-            pickerStations: PickerStationDefaults.stations(for: "TR")
+            pickerStations: PickerStationDefaults.stations(for: "TR"),
+            lastUpdate: nil
         )
     }
 
@@ -35,7 +37,8 @@ struct RailwayWidgetEntry: TimelineEntry {
             schedules: [],
             pickerMode: "none",
             lastError: nil,
-            pickerStations: PickerStationDefaults.stations(for: "HSR")
+            pickerStations: PickerStationDefaults.stations(for: "HSR"),
+            lastUpdate: nil
         )
     }
 }

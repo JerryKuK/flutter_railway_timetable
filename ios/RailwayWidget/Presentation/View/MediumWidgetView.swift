@@ -144,9 +144,11 @@ struct MediumWidgetView: View {
 
             // Footer
             HStack {
-                Text("更新於 \(entry.date, formatter: MediumWidgetView.timeFormatter)")
-                    .font(.system(size: 10))
-                    .foregroundColor(Color(.systemGray3))
+                if let lastUpdate = entry.lastUpdate {
+                    Text("更新於 \(lastUpdate)")
+                        .font(.system(size: 10))
+                        .foregroundColor(Color(.systemGray3))
+                }
                 Spacer()
                 Text("查看更多 →")
                     .font(.system(size: 10, weight: .semibold))
@@ -336,12 +338,6 @@ struct MediumWidgetView: View {
         f.locale = Locale(identifier: "zh_TW")
         return f.string(from: entry.date)
     }
-
-    static let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm"
-        return f
-    }()
 }
 
 // MARK: - Color hex
