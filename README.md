@@ -182,7 +182,7 @@ https://github.com/user-attachments/assets/9ef4c18d-5989-4c51-9dec-88ead482e544
 
 ## iOS桌面小工具Demo
 
-https://github.com/user-attachments/assets/ec8a902f-c45e-4903-93d3-7fb90f58e010
+https://github.com/user-attachments/assets/1b40b484-6a70-45c5-ba41-d0d9755c8140
 
 </td>
 <td width="50%">
