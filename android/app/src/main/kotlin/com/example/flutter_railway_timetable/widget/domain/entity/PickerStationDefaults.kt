@@ -10,10 +10,13 @@ object PickerStationDefaults {
         "臺東" to "6000", "基隆" to "0900",
     )
 
+    // HSR 12 stations in geographic north-to-south order. Matches iOS
+    // PickerStationDefaults.stations(for: "HSR") and ios-hsr-widget spec
+    // requirement that the picker never reorders by recency.
     private val hsr = listOf(
         "南港" to "0990", "臺北" to "1000", "板橋" to "1010", "桃園" to "1020",
-        "新竹" to "1030", "臺中" to "1040", "嘉義" to "1050", "臺南" to "1060",
-        "左營" to "1070", "苗栗" to "1035",
+        "新竹" to "1030", "苗栗" to "1035", "臺中" to "1040", "彰化" to "1043",
+        "雲林" to "1047", "嘉義" to "1050", "臺南" to "1060", "左營" to "1070",
     )
 
     fun stations(system: String): List<PickerStation> {

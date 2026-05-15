@@ -5,10 +5,10 @@ import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.updateAppWidgetState
-import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsTR
+import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsHSR
 import com.example.flutter_railway_timetable.widget.domain.entity.WidgetRoute
 
-class SelectStationAction : ActionCallback {
+class HSRSelectStationAction : ActionCallback {
 
     override suspend fun onAction(
         context: Context,
@@ -17,18 +17,21 @@ class SelectStationAction : ActionCallback {
     ) {
         applyStationSelection(context, parameters)
         updateAppWidgetState(context, glanceId) { prefs ->
-            prefs[RailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
+            prefs[HSRRailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
         }
-        RailwayGlanceWidget().update(context, glanceId)
+        HSRRailwayGlanceWidget().update(context, glanceId)
     }
 
     companion object {
+        // MUST NOT call TdxApiClient — station selection is a UI-only state
+        // change; data refresh is HSRRefreshWidgetAction's job.
         suspend fun applyStationSelection(context: Context, parameters: ActionParameters) {
             val stationName = parameters[ActionKeys.stationName] ?: return
             val stationId = parameters[ActionKeys.stationId] ?: return
             val isFrom = parameters[ActionKeys.isFrom] ?: true
 
-            val current = WidgetPrefsTR.loadRoute(context) ?: WidgetRoute.defaultFor("TR")
+            val current = WidgetPrefsHSR.loadRoute(context)
+                ?: WidgetRoute.defaultFor("HSR")
 
             val updated = if (isFrom) {
                 current.copy(fromName = stationName, fromId = stationId)
@@ -36,9 +39,9 @@ class SelectStationAction : ActionCallback {
                 current.copy(toName = stationName, toId = stationId)
             }
 
-            WidgetPrefsTR.saveRoute(context, updated)
-            WidgetPrefsTR.saveSchedules(context, emptyList())
-            WidgetPrefsTR.savePickerMode(context, "home")
+            WidgetPrefsHSR.saveRoute(context, updated)
+            WidgetPrefsHSR.saveSchedules(context, emptyList())
+            WidgetPrefsHSR.savePickerMode(context, "home")
         }
     }
 }

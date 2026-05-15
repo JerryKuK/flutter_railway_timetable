@@ -32,21 +32,23 @@ class MainActivity : FlutterActivity() {
                         result.success(dbDir.absolutePath)
                     }
 
-                    // Triggers Glance recomposition for every widget instance via the
-                    // VERSION_KEY pattern so the picker reflects newly-pinned stations
-                    // immediately after the user selects from/to in the app.
+                    // TR-only: bumps every TR widget's STATIONS_VERSION_KEY so its
+                    // picker re-queries Drift after the user picks new from/to stations
+                    // on the home page. HSR widget intentionally not reloaded — its
+                    // picker is a fixed 12-station N→S list, no Flutter-side sync.
                     "reloadWidget" -> {
                         lifecycleScope.launch(Dispatchers.IO) {
                             try {
                                 val manager = GlanceAppWidgetManager(applicationContext)
-                                val ids = manager.getGlanceIds(RailwayGlanceWidget::class.java)
-                                for (gid in ids) {
+                                val now = System.currentTimeMillis()
+
+                                for (gid in manager.getGlanceIds(RailwayGlanceWidget::class.java)) {
                                     updateAppWidgetState(applicationContext, gid) { prefs ->
-                                        prefs[RailwayGlanceWidget.VERSION_KEY] =
-                                            System.currentTimeMillis()
+                                        prefs[RailwayGlanceWidget.STATIONS_VERSION_KEY] = now
                                     }
                                     RailwayGlanceWidget().update(applicationContext, gid)
                                 }
+
                                 runOnUiThread { result.success(null) }
                             } catch (e: Exception) {
                                 runOnUiThread { result.error("RELOAD_FAILED", e.message, null) }

@@ -54,11 +54,16 @@ class TdxApiClient(
             val dep = item.originStopTime?.departureTime?.take(5)
             val arr = item.destinationStopTime?.arrivalTime?.take(5)
             if (dep.isNullOrBlank() || arr.isNullOrBlank()) return@mapNotNull null
+            // TrainNo / TrainTypeName live inside DailyTrainInfo — reading the
+            // old top-level keys yields "#null" / "null" instead of the train
+            // number and type. Falls back to "標準" for type and empty TrainNo
+            // (rendered as just "#") if the nested object is missing.
+            val info = item.dailyTrainInfo
             WidgetSchedule(
                 dep = dep,
                 arr = arr,
-                type = item.trainTypeName?.zhTw ?: "標準",
-                num = "#${item.trainNo}",
+                type = info?.trainTypeName?.zhTw ?: "標準",
+                num = "#${info?.trainNo ?: ""}",
             )
         }
     }

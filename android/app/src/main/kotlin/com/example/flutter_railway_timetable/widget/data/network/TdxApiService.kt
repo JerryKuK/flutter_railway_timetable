@@ -57,11 +57,18 @@ data class TdxStopTime(
 
 // ─── HSR DTOs ──────────────────────────────────────────────────────────────
 
+// TDX v2 THSR DailyTimetable OD API nests TrainNo + TrainTypeName inside
+// a `DailyTrainInfo` object (mirrors the Flutter side fix in commit 4545b13).
+// OriginStopTime / DestinationStopTime stay at the top level.
 data class TdxThsrItem(
-    @SerializedName("TrainNo") val trainNo: String = "",
-    @SerializedName("TrainTypeName") val trainTypeName: TdxMultilingualName?,
+    @SerializedName("DailyTrainInfo") val dailyTrainInfo: TdxThsrDailyTrainInfo?,
     @SerializedName("OriginStopTime") val originStopTime: TdxThsrStopTime?,
     @SerializedName("DestinationStopTime") val destinationStopTime: TdxThsrStopTime?,
+)
+
+data class TdxThsrDailyTrainInfo(
+    @SerializedName("TrainNo") val trainNo: String = "",
+    @SerializedName("TrainTypeName") val trainTypeName: TdxMultilingualName?,
 )
 
 data class TdxThsrStopTime(

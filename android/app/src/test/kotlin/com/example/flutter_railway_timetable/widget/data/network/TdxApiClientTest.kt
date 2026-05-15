@@ -154,8 +154,7 @@ class TdxApiClientTest {
             service.getHSRDailyTimetable(any(), any(), any(), any())
         } returns Response.success(listOf(
             TdxThsrItem(
-                trainNo = "1234",
-                trainTypeName = null,
+                dailyTrainInfo = TdxThsrDailyTrainInfo(trainNo = "1234", trainTypeName = null),
                 originStopTime = TdxThsrStopTime("09:00:00", ""),
                 destinationStopTime = TdxThsrStopTime("", "10:30:00"),
             )
@@ -168,5 +167,53 @@ class TdxApiClientTest {
         assertEquals("10:30", result[0].arr)
         assertEquals("標準", result[0].type)
         assertEquals("#1234", result[0].num)
+    }
+
+    // Regression guard: TDX v2 THSR DailyTimetable OD API nests TrainNo and
+    // TrainTypeName inside `DailyTrainInfo` (not at the top level). Reading
+    // the top-level keys would render trains as "#null" / "null" — same bug
+    // Flutter side fixed in commit 4545b13.
+    @Test
+    fun `fetchHSRSchedule reads TrainNo and TrainTypeName from nested DailyTrainInfo`() = runBlocking {
+        coEvery {
+            service.getHSRDailyTimetable(any(), any(), any(), any())
+        } returns Response.success(listOf(
+            TdxThsrItem(
+                dailyTrainInfo = TdxThsrDailyTrainInfo(
+                    trainNo = "0617",
+                    trainTypeName = TdxMultilingualName("標準"),
+                ),
+                originStopTime = TdxThsrStopTime("16:20:00", ""),
+                destinationStopTime = TdxThsrStopTime("", "16:28:00"),
+            )
+        ))
+
+        val result = client.fetchHSRSchedule("0990", "1000", "2026-05-09")
+
+        assertEquals(1, result.size)
+        assertEquals("#0617", result[0].num)   // must NOT be "#null"
+        assertEquals("標準", result[0].type)    // must NOT be "null"
+    }
+
+    // Gson schema check: simulates what happens if a real API response only
+    // has top-level TrainNo (e.g., if TDX ever flattens) — the DTO must NOT
+    // crash, and the train should fall through to empty-num / 標準 fallback.
+    @Test
+    fun `fetchHSRSchedule survives missing DailyTrainInfo with sensible fallbacks`() = runBlocking {
+        coEvery {
+            service.getHSRDailyTimetable(any(), any(), any(), any())
+        } returns Response.success(listOf(
+            TdxThsrItem(
+                dailyTrainInfo = null,
+                originStopTime = TdxThsrStopTime("16:35:00", ""),
+                destinationStopTime = TdxThsrStopTime("", "16:43:00"),
+            )
+        ))
+
+        val result = client.fetchHSRSchedule("0990", "1000", "2026-05-09")
+
+        assertEquals(1, result.size)
+        assertEquals("#", result[0].num)       // empty trainNo, never "#null"
+        assertEquals("標準", result[0].type)
     }
 }

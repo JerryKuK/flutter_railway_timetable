@@ -14,45 +14,47 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.flutter_railway_timetable.R
-import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsTR
+import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsHSR
 import com.example.flutter_railway_timetable.widget.data.repository.WidgetStationRepositoryImpl
 import com.example.flutter_railway_timetable.widget.domain.entity.PickerStation
 import com.example.flutter_railway_timetable.widget.domain.entity.PickerStationDefaults
 import com.example.flutter_railway_timetable.widget.domain.entity.WidgetRoute
 import com.example.flutter_railway_timetable.widget.domain.usecase.GetPickerStationsUseCase
 
-private val trPalette = Palette(
-    accent = Color(0xFF2E72B8),
-    accentSoft = Color(0xFFE3EEF9),
-    displayName = "台鐵",
-    iconRes = R.drawable.widget_icon_tr,
+// HSR widget palette — mirrors iOS RailwayPalette.hsr.
+private val hsrPalette = Palette(
+    accent = Color(0xFFC86820),
+    accentSoft = Color(0xFFFBEEDF),
+    displayName = "高鐵",
+    iconRes = R.drawable.widget_icon_hsr,
 )
 
-class RailwayGlanceWidget : GlanceAppWidget() {
+class HSRRailwayGlanceWidget : GlanceAppWidget() {
 
     override val stateDefinition = PreferencesGlanceStateDefinition
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val state = currentState<Preferences>()
-            // STATIONS_VERSION_KEY is only bumped by MainActivity.reloadWidget when
-            // Flutter syncs Drift station data. Action callbacks bump VERSION_KEY
-            // (which Glance observes for recompose) but NOT this key, so they
-            // don't trigger an unnecessary Room re-query for stations.
+            // HSR picker is a fixed 12-station N→S list, so STATIONS_VERSION_KEY
+            // is never bumped from Flutter — its purpose here is only to keep
+            // produceState from re-running when action callbacks bump VERSION_KEY
+            // for UI recompose. Effectively `Unit` as the key, written explicitly
+            // to mirror the TR widget shape.
             val stationsVersion = state[STATIONS_VERSION_KEY] ?: 0L
 
-            val pickerMode = WidgetPrefsTR.loadPickerMode(context)
-            val route = WidgetPrefsTR.loadRoute(context) ?: WidgetRoute.defaultFor("TR")
-            val schedules = WidgetPrefsTR.loadSchedules(context)
-            val lastError = WidgetPrefsTR.loadLastError(context)
-            val lastUpdate = WidgetPrefsTR.loadLastUpdate(context)
+            val pickerMode = WidgetPrefsHSR.loadPickerMode(context)
+            val route = WidgetPrefsHSR.loadRoute(context) ?: WidgetRoute.defaultFor("HSR")
+            val schedules = WidgetPrefsHSR.loadSchedules(context)
+            val lastError = WidgetPrefsHSR.loadLastError(context)
+            val lastUpdate = WidgetPrefsHSR.loadLastUpdate(context)
 
             val stations: List<PickerStation> by produceState(
-                initialValue = PickerStationDefaults.stations("TR"),
+                initialValue = PickerStationDefaults.stations("HSR"),
                 stationsVersion,
             ) {
                 value = GetPickerStationsUseCase(WidgetStationRepositoryImpl(context))
-                    .execute("TR")
+                    .execute("HSR")
             }
 
             if (pickerMode == "from" || pickerMode == "to") {
@@ -60,10 +62,13 @@ class RailwayGlanceWidget : GlanceAppWidget() {
                     route = route,
                     stations = stations,
                     mode = pickerMode,
-                    palette = trPalette,
-                    chunkSize = 5,
+                    palette = hsrPalette,
+                    // 4 cols × 3 rows = 12 stations. 6-col rows overflow the
+                    // 4×2 widget width (last chip gets clipped); 4 cols keeps
+                    // ~60dp per chip and renders all 12 reliably.
+                    chunkSize = 4,
                     selectStationAction = { station, isFrom ->
-                        actionRunCallback<SelectStationAction>(
+                        actionRunCallback<HSRSelectStationAction>(
                             actionParametersOf(
                                 ActionKeys.stationName to station.name,
                                 ActionKeys.stationId to station.stationId,
@@ -71,7 +76,7 @@ class RailwayGlanceWidget : GlanceAppWidget() {
                             )
                         )
                     },
-                    dismissAction = actionRunCallback<DismissPickerAction>(),
+                    dismissAction = actionRunCallback<HSRDismissPickerAction>(),
                 )
             } else {
                 WidgetContent(
@@ -79,21 +84,21 @@ class RailwayGlanceWidget : GlanceAppWidget() {
                     schedules = schedules,
                     lastError = lastError,
                     lastUpdate = lastUpdate,
-                    palette = trPalette,
-                    showFromPickerAction = actionRunCallback<ShowPickerAction>(
+                    palette = hsrPalette,
+                    showFromPickerAction = actionRunCallback<HSRShowPickerAction>(
                         actionParametersOf(ActionKeys.mode to "from")
                     ),
-                    showToPickerAction = actionRunCallback<ShowPickerAction>(
+                    showToPickerAction = actionRunCallback<HSRShowPickerAction>(
                         actionParametersOf(ActionKeys.mode to "to")
                     ),
-                    refreshAction = actionRunCallback<RefreshWidgetAction>(),
+                    refreshAction = actionRunCallback<HSRRefreshWidgetAction>(),
                 )
             }
         }
     }
 
     companion object {
-        val VERSION_KEY = longPreferencesKey("widget_version")
-        val STATIONS_VERSION_KEY = longPreferencesKey("widget_stations_version")
+        val VERSION_KEY = longPreferencesKey("hsr_widget_version")
+        val STATIONS_VERSION_KEY = longPreferencesKey("hsr_widget_stations_version")
     }
 }

@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">鐵路時刻表</string>
     <string name="widget_description">顯示台鐵下班車時刻</string>
+    <string name="hsr_widget_label">高鐵時刻表</string>
+    <string name="hsr_widget_description">顯示台灣高鐵下班車資訊</string>
 </resources>

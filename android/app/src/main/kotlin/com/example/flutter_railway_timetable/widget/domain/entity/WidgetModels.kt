@@ -16,7 +16,7 @@ data class WidgetRoute(
 ) {
     companion object {
         fun defaultFor(system: String): WidgetRoute = when (system) {
-            "HSR" -> WidgetRoute("南港", "0990", "左營", "1070", "HSR")
+            "HSR" -> WidgetRoute("臺北", "1000", "左營", "1070", "HSR")
             else -> WidgetRoute("臺北", "1000", "高雄", "4400", "TR")
         }
     }

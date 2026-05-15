@@ -9,15 +9,13 @@ import com.example.flutter_railway_timetable.BuildConfig
 import com.example.flutter_railway_timetable.widget.data.auth.KotlinTdxAuthManager
 import com.example.flutter_railway_timetable.widget.data.auth.WidgetAuthException
 import com.example.flutter_railway_timetable.widget.data.network.TdxApiClient
-import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsTR
+import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsHSR
 import com.example.flutter_railway_timetable.widget.data.repository.TrainScheduleRepositoryImpl
-import com.example.flutter_railway_timetable.widget.data.repository.WidgetStationRepositoryImpl
 import com.example.flutter_railway_timetable.widget.domain.entity.WidgetRoute
 import com.example.flutter_railway_timetable.widget.domain.usecase.GetNextTrainsUseCase
-import com.example.flutter_railway_timetable.widget.domain.usecase.GetPickerStationsUseCase
 import com.example.flutter_railway_timetable.widget.util.TaipeiClock
 
-class RefreshWidgetAction : ActionCallback {
+class HSRRefreshWidgetAction : ActionCallback {
 
     override suspend fun onAction(
         context: Context,
@@ -29,9 +27,9 @@ class RefreshWidgetAction : ActionCallback {
         executeWith(context, route, useCase)
 
         updateAppWidgetState(context, glanceId) { prefs ->
-            prefs[RailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
+            prefs[HSRRailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
         }
-        RailwayGlanceWidget().update(context, glanceId)
+        HSRRailwayGlanceWidget().update(context, glanceId)
     }
 
     private fun defaultUseCase(): GetNextTrainsUseCase {
@@ -43,18 +41,12 @@ class RefreshWidgetAction : ActionCallback {
     }
 
     companion object {
-        // Saved route wins; otherwise derive from/to from picker stations (first two
-        // entries — same fallback iOS uses), falling back to platform defaults.
+        // Do NOT fall back to the first two picker stations as TR does —
+        // HSR picker is fixed N→S order, so first-two would always be
+        // 南港 → 臺北 instead of the canonical 臺北 → 左營 default.
         suspend fun resolveRoute(context: Context): WidgetRoute {
-            WidgetPrefsTR.loadRoute(context)?.let { return it }
-            val system = "TR"
-            val stations = GetPickerStationsUseCase(WidgetStationRepositoryImpl(context)).execute(system)
-            val first = stations.getOrNull(0)
-            val second = stations.getOrNull(1)
-            if (first != null && second != null) {
-                return WidgetRoute(first.name, first.stationId, second.name, second.stationId, system)
-            }
-            return WidgetRoute.defaultFor(system)
+            return WidgetPrefsHSR.loadRoute(context)
+                ?: WidgetRoute.defaultFor("HSR")
         }
 
         suspend fun executeWith(
@@ -63,13 +55,14 @@ class RefreshWidgetAction : ActionCallback {
             useCase: GetNextTrainsUseCase,
         ) {
             val today = TaipeiClock.todayDate()
+
             try {
-                val schedules = useCase.execute(route.fromId, route.toId, today, route.system)
-                WidgetPrefsTR.saveRefreshResult(context, route, schedules, TaipeiClock.nowTime())
+                val schedules = useCase.execute(route.fromId, route.toId, today, "HSR")
+                WidgetPrefsHSR.saveRefreshResult(context, route, schedules, TaipeiClock.nowTime())
             } catch (e: WidgetAuthException) {
-                WidgetPrefsTR.saveRefreshError(context, e.message ?: "ERR_AUTH")
+                WidgetPrefsHSR.saveRefreshError(context, e.message ?: "ERR_AUTH")
             } catch (_: Exception) {
-                WidgetPrefsTR.saveRefreshError(context, "查詢失敗，請稍後再試")
+                WidgetPrefsHSR.saveRefreshError(context, "查詢失敗，請稍後再試")
             }
         }
     }

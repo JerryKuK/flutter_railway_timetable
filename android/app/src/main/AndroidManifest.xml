@@ -31,7 +31,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- Railway Widget -->
+        <!-- Railway Widget (TRA) -->
         <receiver
             android:name=".widget.presentation.RailwayWidgetReceiver"
             android:exported="true">
@@ -41,6 +41,19 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/railway_widget_info"/>
+        </receiver>
+
+        <!-- HSR Railway Widget -->
+        <receiver
+            android:name=".widget.presentation.HSRRailwayWidgetReceiver"
+            android:exported="true"
+            android:label="@string/hsr_widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/railway_widget_hsr_info"/>
         </receiver>
     </application>
     <!-- Required to query activities that can process text, see:

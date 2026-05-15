@@ -124,7 +124,7 @@ AI 程式開發助理，負責根據規格撰寫 Flutter 程式碼、修正問�
 
 ## Android Widget 本地設定
 
-本專案包含 Android 桌面小工具（台鐵 4×2），需在 `local.properties` 設定 TDX 憑證。
+本專案包含兩支 Android 桌面小工具：**鐵路時刻表（台鐵 4×2）** 與 **高鐵時刻表（高鐵 4×2）**。兩支 widget 共用同一組 TDX 憑證，無需分別設定。
 
 ### 步驟
 
@@ -145,9 +145,9 @@ AI 程式開發助理，負責根據規格撰寫 Flutter 程式碼、修正問�
 
 3. **安裝並測試**
 
-   安裝 App 後，長按 Android 主畫面 → 新增小工具 → 搜尋「鐵路時刻表」→ 選擇 4×2 尺寸。點擊「查詢」按鈕取得最新班次。
+   安裝 App 後，長按 Android 主畫面 → 新增小工具 → 在 app 區段下可看到「鐵路時刻表」與「高鐵時刻表」兩個選項，皆為 4×2 尺寸，可同時釘住於桌面、各自獨立路線。點擊「查詢」按鈕取得最新班次。
 
-> `local.properties` 已在 `android/.gitignore`，不會被 commit。
+> `local.properties` 已在 `android/.gitignore`，不會被 commit。兩支 widget 共用同一個 SharedPreferences file，但以不同 key prefix（TR 用 `widget_*`、HSR 用 `hsr_widget_*`）完全隔離狀態。
 
 ---
 

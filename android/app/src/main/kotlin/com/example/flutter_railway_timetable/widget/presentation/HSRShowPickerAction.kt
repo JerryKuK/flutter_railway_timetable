@@ -5,9 +5,9 @@ import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.updateAppWidgetState
-import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsTR
+import com.example.flutter_railway_timetable.widget.data.prefs.WidgetPrefsHSR
 
-class ShowPickerAction : ActionCallback {
+class HSRShowPickerAction : ActionCallback {
 
     override suspend fun onAction(
         context: Context,
@@ -16,15 +16,15 @@ class ShowPickerAction : ActionCallback {
     ) {
         applyShowPicker(context, parameters)
         updateAppWidgetState(context, glanceId) { prefs ->
-            prefs[RailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
+            prefs[HSRRailwayGlanceWidget.VERSION_KEY] = System.currentTimeMillis()
         }
-        RailwayGlanceWidget().update(context, glanceId)
+        HSRRailwayGlanceWidget().update(context, glanceId)
     }
 
     companion object {
         suspend fun applyShowPicker(context: Context, parameters: ActionParameters) {
             val mode = parameters[ActionKeys.mode] ?: "from"
-            WidgetPrefsTR.savePickerMode(context, mode)
+            WidgetPrefsHSR.savePickerMode(context, mode)
         }
     }
 }
