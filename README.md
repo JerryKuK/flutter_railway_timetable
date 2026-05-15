@@ -173,3 +173,24 @@ lib/
 ## 影片Demo
 
 https://github.com/user-attachments/assets/9ef4c18d-5989-4c51-9dec-88ead482e544
+
+---
+
+<table>
+<tr>
+<td width="50%">
+
+## iOS桌面小工具Demo
+
+https://github.com/user-attachments/assets/ec8a902f-c45e-4903-93d3-7fb90f58e010
+
+</td>
+<td width="50%">
+
+## Android桌面小工具Demo
+
+https://github.com/user-attachments/assets/e7a2dae1-9fa6-461f-bec0-6a97954b2c60
+
+</td>
+</tr>
+</table>
